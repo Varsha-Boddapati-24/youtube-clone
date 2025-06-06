@@ -45,7 +45,7 @@ export default function Header() {
               <button onClick={() => setShowSearch(true)} className="sm:hidden p-2 text-gray-700">
                 <i className="fa-solid fa-magnifying-glass text-lg"></i>
               </button>
-              <button onClick={() => navigate("/login")} className="flex items-center gap-2 px-4 py-1 text-md font-semibold text-blue-600 border border-blue-600 rounded-full hover:bg-blue-50">
+              <button onClick={() => navigate("/signin")} className="flex items-center gap-2 px-4 py-1 text-md font-semibold text-blue-600 border border-blue-600 rounded-full hover:bg-blue-50">
                 <i className="fa-solid fa-circle-user text-xl"></i>
                 Sign In
               </button>
