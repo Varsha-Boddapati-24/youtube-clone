@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useAuth } from "../context/AuthContext.jsx";
+
 export default function Header() {
+  const {user,setUser}=useAuth();
+  console.log("user",user)
+
   const [showSearch, setShowSearch] = useState(false);
   const navigate=useNavigate()
   return (

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link , useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios"
 export default function Register() {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
@@ -11,7 +12,9 @@ export default function Register() {
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
     const [confirmPasswordError, setConfirmPasswordError] = useState("");
-    const navigate=useNavigate()
+    const [formError, setFormError] = useState("");
+
+    const navigate = useNavigate()
 
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -58,14 +61,39 @@ export default function Register() {
         return isValid;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (validateRegister()) {
-            console.log("Register form submitted:", { username, email, password });
-            // Proceed with API call or further logic
+            try {
+                const response = await axios.post('http://localhost:5000/user/register', {
+                    username,
+                    email,
+                    password
+                },{ withCredentials: true });
+
+                console.log("Registration successful:", response.data);
+
+                // Show success modal
+                setShowModal(true);
+
+                // Optionally clear the form fields here
+                setUsername("");
+                setEmail("");
+                setPassword("");
+                setConfirmPassword("");
+
+            } catch (error) {
+                if (error.response) {
+                    // Backend returned an error, show the error message
+                    setFormError(error.response.data.error || "Registration failed")
+                } else {
+                    // Network or other error
+                    setFormError("Something went wrong. Please try again later.");
+                }
+            }
         }
-    };
+    }
 
     return (
         <div className="py-10 flex items-center justify-center px-4 bg-gray-50 ">
@@ -73,6 +101,11 @@ export default function Register() {
                 <h2 className="text-3xl font-bold mb-6 text-center text-red-600">Register</h2>
 
                 <form onSubmit={handleSubmit}>
+                    {formError && (
+                        <div className="mb-4 text-red-600 text-center font-medium border border-red-300 rounded p-2 bg-red-100">
+                            {formError}
+                        </div>
+                    )}
                     <div className="mb-4">
                         <label htmlFor="username" className="block mb-1 font-medium text-gray-700">
                             Username
@@ -124,7 +157,7 @@ export default function Register() {
                     </div>
 
                     <button type="submit" className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition"
-                        onClick={() => setShowModal(true)}>
+                    >
                         Register
                     </button>
                 </form>

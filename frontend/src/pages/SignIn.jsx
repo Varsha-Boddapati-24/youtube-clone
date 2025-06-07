@@ -1,11 +1,13 @@
 import { useState } from "react";
-import {Link,useNavigate} from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import axios from "axios";
 export default function SignIn() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
-    const navigate=useNavigate()
+    const [formError, setFormError] = useState("");
+    const navigate = useNavigate()
 
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -34,11 +36,29 @@ export default function SignIn() {
         return isValid;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (validateLogin()) {
-            console.log("Form submitted:", email, password);
+            console.log("inside")
+            try {
+                console.log("inside try ")
+                const res = await axios.post("http://localhost:5000/user/signin", {
+                    email,
+                    password
+                },{ withCredentials: true });
+                 console.log("resule",res)
+                navigate("/");
+
+            } catch (error) {
+                if (error.response) {
+                    setFormError(error.response.data.error || "Login failed");
+                } else {
+                    console.log(error)
+                    setFormError("Something went wrong. Please try again later.");
+                }
+            }
         }
+
     };
     return (
         <div className="py-10 flex items-center justify-center px-4 z-40">
@@ -46,6 +66,11 @@ export default function SignIn() {
                 <h2 className="text-3xl font-bold mb-6 text-center text-red-600">Sign In</h2>
 
                 <form onSubmit={handleSubmit}>
+                    {formError && (
+                        <div className="mb-4 text-red-600 font-medium text-center border border-red-300 rounded p-2 bg-red-50">
+                            {formError}
+                        </div>
+                    )}
                     <div className="mb-6">
                         <label htmlFor="email" className="block mb-1 font-medium text-gray-700">Email</label>
                         <input id="email" name="email" type="email" placeholder="you@example.com"
@@ -65,7 +90,7 @@ export default function SignIn() {
                     </div>
                     {/* {error && <p className="text-red-500 text-sm mb-3">{error}</p>} */}
 
-                    <button type="submit" onClick={()=>navigate("/")}
+                    <button type="submit"
                         className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition mb-6" >
                         Sign In
                     </button>
@@ -74,7 +99,7 @@ export default function SignIn() {
                 <p className="mt-4 text-center text-sm text-gray-600">
                     Don't have an account?{' '}
                     <Link to="/register" className="text-red-600 hover:underline">
-                      Register here
+                        Register here
                     </Link>
                 </p>
             </div>
