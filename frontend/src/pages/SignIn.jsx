@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom"
 import axios from "axios";
+import { useAuth } from "../context/AuthContext";
 export default function SignIn() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
@@ -8,6 +9,7 @@ export default function SignIn() {
     const [passwordError, setPasswordError] = useState("");
     const [formError, setFormError] = useState("");
     const navigate = useNavigate()
+      const { fetchUser} = useAuth();
 
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -46,6 +48,7 @@ export default function SignIn() {
                     email,
                     password
                 },{ withCredentials: true });
+                await fetchUser();
                  console.log("resule",res)
                 navigate("/");
 
