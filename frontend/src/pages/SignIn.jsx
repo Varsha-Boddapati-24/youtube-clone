@@ -9,7 +9,7 @@ export default function SignIn() {
     const [passwordError, setPasswordError] = useState("");
     const [formError, setFormError] = useState("");
     const navigate = useNavigate()
-      const { fetchUser} = useAuth();
+    const { fetchUser} = useAuth();
 
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;

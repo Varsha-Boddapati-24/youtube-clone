@@ -12,10 +12,10 @@ const appRouter = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: '/signin',
+        path: 'signin',
         element: <SignIn/>
       },{
-        path:"/register",
+        path:"register",
         element:<Register/>
       }
 

@@ -1,30 +1,24 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import CreateChannelModal from "./CreateChannelModal.jsx";
 
 import { useAuth } from "../context/AuthContext.jsx";
+import useClickOutside from "../hooks/useClickOutside";
 
-export default function Header() {
-  const { user,signout } = useAuth();
+export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
+  const { user, signout } = useAuth();
   console.log("user", user)
 
   const [showSearch, setShowSearch] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [showChannelModal, setShowChannelModal] = useState(false);
   const navigate = useNavigate()
   const menuRef = useRef(null);
 
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setShowMenu(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  useClickOutside([menuRef], () => setShowMenu(false), showMenu);
   return (
     <>
-      <header className="flex items-center justify-between bg-white   px-4 py-2 sticky top-0 ">
+      <header className="flex items-center justify-between bg-white   px-4 py-2 sticky top-0  z-50">
         {showSearch ? (
           <div className="flex items-center w-full sm:hidden py-2 gap-2">
             <button onClick={() => setShowSearch(false)} className="text-xl text-gray-700 mr-2">
@@ -43,7 +37,7 @@ export default function Header() {
           <div className="flex items-center justify-between w-full">
             {/* Left: menu + logo */}
             <div className="flex items-center gap-4 ">
-              <button>
+              <button ref={hamburgerRef} onClick={toggleSidebar}>
                 <i className="fa-solid fa-bars text-xl text-gray-700"></i>
               </button>
               <img src="/youtube.jpg" alt="YouTube Logo" className="w-28 h-auto object-contain " />
@@ -68,7 +62,8 @@ export default function Header() {
                 Sign In
               </button> */}
               {user ? (
-                <div className=" relative flex items-center gap-2">
+
+                <div ref={menuRef} className=" relative flex items-center gap-2">
                   <img
                     src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.username || "User")}&background=random`}
                     alt="User Avatar"
@@ -77,8 +72,9 @@ export default function Header() {
                   />
                   <span className="text-gray-700 font-medium">{user.username || "User"}</span>
 
+
                   {showMenu && (
-                    <div ref={menuRef} className="absolute right-0 mt-60 w-55 md:w-72 lg:w-70 bg-white rounded-xl shadow-lg z-50 p-4">
+                    <div className="absolute right-0 mt-60 w-55 md:w-72 lg:w-70 bg-white rounded-xl shadow-lg z-50 p-4">
                       {/* User Info */}
                       <div className="flex items-center gap-3 mb-3 py-4 border-b-1">
                         <img
@@ -92,18 +88,17 @@ export default function Header() {
                         </div>
                       </div>
 
-                      {/* <hr className="my-2" /> */}
-
                       {/* Conditional buttons */}
                       {!user.channel ? (
                         <button
                           onClick={() => {
-                            navigate("/create-channel");
+                            setShowChannelModal(true);
                             setShowMenu(false);
                           }}
+
                           className=" flex items-center gap-2 w-full text-left text-blue-600 hover:bg-blue-50 p-2 rounded text-sm sm:text-base"
                         >
-                          <i class="fa-solid fa-plus"></i> Create Channel
+                          <i className="fa-solid fa-plus"></i> Create Channel
                         </button>
                       ) : (
                         <button
@@ -118,11 +113,11 @@ export default function Header() {
                       )}
 
                       <button
-                         onClick={async () => {
-                  await signout();
-                  setShowMenu(false);
-                  // navigate("/signin"); 
-                }}
+                        onClick={async () => {
+                          await signout();
+                          setShowMenu(false);
+                          // navigate("/signin"); 
+                        }}
                         className="flex items-center gap-2 w-full text-left text-red-600 hover:bg-red-50 p-2 mt-2 rounded text-sm sm:text-base" >
                         <i className="fa-solid fa-arrow-right-to-bracket"> </i> Sign Out
                       </button>
@@ -133,7 +128,11 @@ export default function Header() {
 
                 : (
                   <button
-                    onClick={() => navigate("/signin")}
+                    onClick={(e) => {
+                      console.log("called")
+                      onClose();
+                      navigate("signin")
+                    }}
                     className="flex items-center gap-2 px-4 py-1 text-md font-semibold text-blue-600 border border-blue-600 rounded-full hover:bg-blue-50"
                   >
                     <i className="fa-solid fa-circle-user text-xl"></i>
@@ -163,6 +162,12 @@ export default function Header() {
           </button>
         </div> */}
       </header>
+       {/* Place the modal rendering right here, outside the header but inside the component */}
+      {showChannelModal && (
+        <CreateChannelModal
+          onClose={() => setShowChannelModal(false)}
+        />
+      )}
     </>
   )
 }

@@ -4,6 +4,7 @@ import mongoose from "mongoose"
 import dotenv from "dotenv"
 import cors from 'cors';
 import userRouter from "./routes/user.routes.js";
+import channelRouter from "./routes/channel.routes.js"
 import cookieParser from 'cookie-parser';
 
 
@@ -27,6 +28,7 @@ app.use(cookieParser());
 // ------------------ ROUTE MOUNTING ------------------
 // Route handler for user registration and login
 app.use("/user", userRouter)
+app.use("/channels", channelRouter);
 
 // ------------------ DATABASE CONNECTION ------------------
 // Connecting to MongoDB using Mongoose
