@@ -1,13 +1,17 @@
-// import FilterButtons from "../components/FilterButtons";
+import FilterBar from "../components/FilterBar";
 import VideoGrid from "../components/VideoGrid";
+import { useState } from "react";
 
 function Home() {
+  const [filter, setFilter] = useState("All");
   return (
-    <div className="p-4">
-      {/* <FilterButtons /> */}
- 
-      <VideoGrid />
-    </div>
+    <>
+      <FilterBar onFilterChange={setFilter} />
+      <div className="p-4">
+        <VideoGrid />
+      </div>
+    </>
+
   );
 }
 

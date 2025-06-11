@@ -26,7 +26,8 @@ const VideoGrid = () => {
   if (error) return <p className="text-red-600 text-center">{error}</p>;
 
   return (
-    <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+  <div className="grid gap-6 grid-cols-[repeat(auto-fit,minmax(250px,1fr))]">
+
       {videos.map((video) => (
         <VideoCard key={video.id} {...video} />
       ))}

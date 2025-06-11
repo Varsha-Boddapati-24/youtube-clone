@@ -11,9 +11,9 @@ export default function Sidebar({ isOpen, onClose ,sidebarRef}) {
 
     return (
         <div ref={sidebarRef}
-            className={`h-screen bg-white shadow-md p-2 pt-4  transition-all duration-300 ease-in-out
-      ${isOpen ? "w-60" : "w-20"}
-      fixed md:relative z-10`}
+            className={`h-screen bg-white shadow-lg p-2 pt-4  transition-all duration-300 ease-in-out 
+      ${isOpen ? "w-45" : "w-11"}
+    fixed  md:relative z-10`}
         >
             <ul className="space-y-4">
                 {sidebarItems.map(({ label, icon }) => (
