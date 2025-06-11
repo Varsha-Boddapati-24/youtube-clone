@@ -6,6 +6,7 @@ import cors from 'cors';
 import userRouter from "./routes/user.routes.js";
 import channelRouter from "./routes/channel.routes.js"
 import cookieParser from 'cookie-parser';
+import videoRouter from "./routes/video.routes.js";
 
 
 
@@ -29,6 +30,7 @@ app.use(cookieParser());
 // Route handler for user registration and login
 app.use("/user", userRouter)
 app.use("/channels", channelRouter);
+app.use("/videos",videoRouter)
 
 // ------------------ DATABASE CONNECTION ------------------
 // Connecting to MongoDB using Mongoose

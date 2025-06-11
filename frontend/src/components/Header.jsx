@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import CreateChannelModal from "./CreateChannelModal.jsx";
+import CreateChannelModal from "./createChannelModal.jsx";
 
 import { useAuth } from "../context/AuthContext.jsx";
 import useClickOutside from "../hooks/useClickOutside";
@@ -108,7 +108,7 @@ export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
                           }}
                           className=" flex items-center gap-2 w-full text-left text-green-600 hover:bg-green-50 p-2 rounded text-sm sm:text-base"
                         >
-                          <i class="fa-solid fa-eye"></i> View Channel
+                          <i className="fa-solid fa-eye"></i> View Channel
                         </button>
                       )}
 

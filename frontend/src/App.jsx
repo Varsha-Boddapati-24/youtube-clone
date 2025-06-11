@@ -27,13 +27,15 @@ function App() {
     <>
       <AuthProvider>
         <Header toggleSidebar={toggleSidebar} hamburgerRef={hamburgerRef} onClose={closeSidebar} />
+         <div className="flex">
         <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} sidebarRef={sidebarRef} />
         <main
-          className={`flex-1 border-2 transition-all duration-300 ${isSidebarOpen ? "ml-60" : "ml-20"}`}
+          // className={`flex-1  transition-all duration-300 ${isSidebarOpen ? "ml-60" : "ml-20"}`}
 
         >
           <Outlet />
         </main>
+        </div>
       </AuthProvider>
 
     </>
