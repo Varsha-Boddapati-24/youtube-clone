@@ -4,7 +4,14 @@ import videoModel from "../models/video.model.js";
 // GET /videos - fetch all videos
 export const getAllVideos = async (req, res) => {
   try {
-    const videos = await videoModel.find()
+     const { category } = req.query; 
+
+    let query = {};
+    if (category && category !== "All") {
+      query.category = category;  
+    }
+    
+    const videos = await videoModel.find(query)
     .populate('channelId', 'channelName')
       .populate('uploader', 'username');
 // console.log("videos",video[0])
@@ -29,6 +36,19 @@ export const getVideoById = async (req, res) => {
   }
 };
 
+export const searchVideos = async (req, res) => {
+  try {
+    const { query } = req.query;
+    const videos = await videoModel.find({
+      title: { $regex: query, $options: "i" } 
+    }).populate('channelId', 'channelName').populate('uploader', 'username');
+
+    res.json(videos);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Error searching videos", error: err.message });
+  }
+};
 // POST /videos - create a new video
 export const createVideo = async (req, res) => {
   try {

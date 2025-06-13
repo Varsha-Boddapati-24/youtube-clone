@@ -7,6 +7,7 @@ import userRouter from "./routes/user.routes.js";
 import channelRouter from "./routes/channel.routes.js"
 import cookieParser from 'cookie-parser';
 import videoRouter from "./routes/video.routes.js";
+import commentRouter from "./routes/comment.routes.js";
 
 
 
@@ -31,6 +32,7 @@ app.use(cookieParser());
 app.use("/user", userRouter)
 app.use("/channels", channelRouter);
 app.use("/videos",videoRouter)
+app.use("/comments",commentRouter)
 
 // ------------------ DATABASE CONNECTION ------------------
 // Connecting to MongoDB using Mongoose

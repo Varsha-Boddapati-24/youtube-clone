@@ -6,6 +6,8 @@ import SignIn from './pages/SignIn.jsx'
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import Register from './pages/Register.jsx'
 import Home from './pages/Home.jsx'
+import Search from './pages/Search.jsx'
+import VideoPlayer from './pages/VideoPlayer.jsx'
 
 const appRouter = createBrowserRouter([
   {
@@ -23,6 +25,13 @@ const appRouter = createBrowserRouter([
       },{
         path:"register",
         element:<Register/>
+      },{
+        path:"/search",
+        element:<Search/>
+      },{
+        path:"/video/:id",
+        element:<VideoPlayer/>
+
       }
 
 

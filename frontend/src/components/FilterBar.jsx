@@ -2,7 +2,6 @@ import { useState, useRef } from "react";
 
 const filters = [
   "All", "Music", "Gaming", "News", "Sports", "Movies",
-  "Education", "Coding", "Comedy", "Technology", "Health", "Food",
   "Education", "Coding", "Comedy", "Technology", "Health", "Food"
 ];
 
@@ -47,11 +46,11 @@ export default function FilterBar({ onFilterChange }) {
               msOverflowStyle: "none"
             }}
           >
-            <style>{`
+       {/* <style>{`
               div::-webkit-scrollbar {
                 display: none;
               }
-            `}</style>
+            `}</style> */}
 
             {filters.map((filter) => (
               <button

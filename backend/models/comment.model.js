@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 const commentSchema = new mongoose.Schema({
-  videoId: { type: Schema.Types.ObjectId, ref: 'Video', index: true },
-  userId:  { type: Schema.Types.ObjectId, ref: 'User' },
+  videoId: { type: mongoose.Schema.Types.ObjectId, ref: 'Video'},
+  userId:  { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
   text:    String,
   timestamp: { type: Date, default: Date.now },
 });

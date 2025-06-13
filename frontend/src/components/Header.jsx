@@ -8,12 +8,18 @@ import useClickOutside from "../hooks/useClickOutside";
 export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
   const { user, signout } = useAuth();
   console.log("user", user)
-
+  const [query, setQuery] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [showChannelModal, setShowChannelModal] = useState(false);
   const navigate = useNavigate()
   const menuRef = useRef(null);
+   const handleSearch = () => {
+    console.log("inside query ",query)
+    if(query.trim()) {
+      navigate(`/search?q=${encodeURIComponent(query)}`);
+    }
+  }
 
   useClickOutside([menuRef], () => setShowMenu(false), showMenu);
   return (
@@ -24,10 +30,10 @@ export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
             <button onClick={() => setShowSearch(false)} className="text-xl text-gray-700 mr-2">
               <i className="fa-solid fa-arrow-left"></i>
             </button>
-            <input type="text" placeholder="Search"
+            <input type="text" placeholder="Search"  value={query}  onChange={(e) => setQuery(e.target.value)}
               className="flex-grow px-4 py-2 border border-gray-300 rounded-full focus:outline-none"
             />
-            <button className=" py-2 ml-2 hover:bg-gray-100 rounded-full">
+            <button className=" py-2 ml-2 hover:bg-gray-100 rounded-full"  onClick={handleSearch}>
               <i className="fa-solid fa-magnifying-glass text-lg text-gray-700"></i>
             </button>
           </div>
@@ -45,8 +51,8 @@ export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
 
             {/* Middle: desktop search bar */}
             <div className=" hidden sm:flex items-center flex-1 mx-4 max-w-xl  focus-within:border-black">
-              <input type="text" placeholder="Search" className="w-full px-4 py-2 border  border-gray-300  rounded-l-full  focus:outline-none focus:border-black" />
-              <button className="h-full px-4 py-2 border  border-gray-300  rounded-r-full  hover:bg-gray-100">
+              <input type="text" placeholder="Search" value={query}  onChange={(e) => setQuery(e.target.value)} className="w-full px-4 py-2 border  border-gray-300  rounded-l-full  focus:outline-none focus:border-black" />
+              <button  onClick={handleSearch} className="h-full px-4 py-2 border  border-gray-300  rounded-r-full  hover:bg-gray-100">
                 <i className="fa-solid fa-magnifying-glass text-lg  text-gray-700"></i>
               </button>
 
