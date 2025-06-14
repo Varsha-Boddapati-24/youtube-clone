@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation } from "react-router-dom";
 import CreateChannelModal from "./createChannelModal.jsx";
 
 import { useAuth } from "../context/AuthContext.jsx";
@@ -13,6 +13,7 @@ export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
   const [showMenu, setShowMenu] = useState(false);
   const [showChannelModal, setShowChannelModal] = useState(false);
   const navigate = useNavigate()
+    const location = useLocation();
   const menuRef = useRef(null);
    const handleSearch = () => {
     console.log("inside query ",query)
@@ -43,7 +44,7 @@ export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
           <div className="flex items-center justify-between w-full">
             {/* Left: menu + logo */}
             <div className="flex items-center gap-4 ">
-              <button ref={hamburgerRef} onClick={toggleSidebar}>
+              <button ref={hamburgerRef} onClick={toggleSidebar} className="cursor-pointer">
                 <i className="fa-solid fa-bars text-xl text-gray-700"></i>
               </button>
               <img src="/youtube.jpg" alt="YouTube Logo" className="w-28 h-auto object-contain " />
@@ -86,7 +87,7 @@ export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
                         <img
                           src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.username || "User")}&background=random`}
                           alt="User Avatar"
-                          className="w-10 h-10 rounded-full object-cover"
+                          className="w-10 h-10 rounded-full object-cover cursor-pointer"
                         />
                         <div className="flex flex-col">
                           <span className="font-semibold text-gray-800 text-sm sm:text-base">{user.username}</span>
@@ -112,7 +113,7 @@ export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
                             navigate(`/channel/${user.channel}`);
                             setShowMenu(false);
                           }}
-                          className=" flex items-center gap-2 w-full text-left text-green-600 hover:bg-green-50 p-2 rounded text-sm sm:text-base"
+                          className=" flex items-center gap-2 w-full text-left text-green-600 hover:bg-green-50 p-2 rounded text-sm sm:text-base cursor-pointer"
                         >
                           <i className="fa-solid fa-eye"></i> View Channel
                         </button>
@@ -122,9 +123,9 @@ export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
                         onClick={async () => {
                           await signout();
                           setShowMenu(false);
-                          // navigate("/signin"); 
+                           navigate("/"); 
                         }}
-                        className="flex items-center gap-2 w-full text-left text-red-600 hover:bg-red-50 p-2 mt-2 rounded text-sm sm:text-base" >
+                        className="flex items-center gap-2 w-full text-left text-red-600 hover:bg-red-50 p-2 mt-2 rounded text-sm sm:text-base cursor-pointer" >
                         <i className="fa-solid fa-arrow-right-to-bracket"> </i> Sign Out
                       </button>
                     </div>
@@ -137,7 +138,7 @@ export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
                     onClick={(e) => {
                       console.log("called")
                       onClose();
-                      navigate("signin")
+                      navigate(`/signin?redirect=${encodeURIComponent(location.pathname)}`)
                     }}
                     className="flex items-center gap-2 px-4 py-1 text-md font-semibold text-blue-600 border border-blue-600 rounded-full hover:bg-blue-50"
                   >

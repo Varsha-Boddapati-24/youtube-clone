@@ -6,6 +6,8 @@ import {
   createVideo,
   updateVideo,
   deleteVideo,
+  likeVideo,
+  dislikeVideo
 } from "../controllers/video.controller.js";
 import authenticateUser from "../middlewares/authenticate.js";
 
@@ -18,5 +20,7 @@ videoRouter.get("/:id", getVideoById);
 videoRouter.post("/",authenticateUser, createVideo);
 videoRouter.put("/:id", authenticateUser,updateVideo);
 videoRouter.delete("/:id",authenticateUser, deleteVideo);
+videoRouter.post("/:id/like",authenticateUser, likeVideo);
+videoRouter.post("/:id/dislike", authenticateUser,dislikeVideo);
 
 export default videoRouter;

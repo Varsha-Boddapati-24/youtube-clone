@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate, useLocation } from "react-router-dom"
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 export default function SignIn() {
@@ -10,6 +10,12 @@ export default function SignIn() {
     const [formError, setFormError] = useState("");
     const navigate = useNavigate()
     const { fetchUser} = useAuth();
+    const location = useLocation();
+
+  const params = new URLSearchParams(location.search);
+  console.log("parms",params.get('redirect'))
+  const redirectPath = params.get('redirect') || '/'
+  console.log("redirectPath",redirectPath)
 
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -50,7 +56,7 @@ export default function SignIn() {
                 },{ withCredentials: true });
                 await fetchUser();
                  console.log("resule",res)
-                navigate("/");
+               navigate(redirectPath);
 
             } catch (error) {
                 if (error.response) {

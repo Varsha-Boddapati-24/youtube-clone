@@ -1,7 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { formatDuration, getTimeAgo } from "../utils/dateUtils";  // ✅ (your already created helper functions)
-
+import { formatDuration, getTimeAgo } from "../utils/dateUtils";  
 export default function SuggestedVideoCard({ video }) {
   const videoRef = useRef(null);
   const [duration, setDuration] = useState(null);
