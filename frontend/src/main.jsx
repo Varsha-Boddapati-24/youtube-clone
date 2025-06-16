@@ -8,6 +8,7 @@ import Register from './pages/Register.jsx'
 import Home from './pages/Home.jsx'
 import Search from './pages/Search.jsx'
 import VideoPlayer from './pages/VideoPlayer.jsx'
+import ViewChannel from './pages/ViewChannel.jsx'
 
 const appRouter = createBrowserRouter([
   {
@@ -31,6 +32,11 @@ const appRouter = createBrowserRouter([
       },{
         path:"/video/:id",
         element:<VideoPlayer/>
+
+      },
+      {
+        path:"/channel/:id",
+        element:<ViewChannel/>
 
       }
 

@@ -7,26 +7,29 @@ import { useRef } from "react";
 import Spinner from './Spinner';
 
 export default function CommentsSection({ videoId }) {
-  const [comments, setComments] = useState([]);
-  const [newComment, setNewComment] = useState('');
-  const [isCommentBoxOpen, setIsCommentBoxOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [showSignInModal, setShowSignInModal] = useState(false);
-  const [editingCommentId, setEditingCommentId] = useState(null);
-  const [editingText, setEditingText] = useState('');
-  const [showDropdownId, setShowDropdownId] = useState(null);
+  // State declarations
+  const [comments, setComments] = useState([]); // All comments for current video
+  const [newComment, setNewComment] = useState(''); // New comment input
+  const [isCommentBoxOpen, setIsCommentBoxOpen] = useState(false); // Whether comment input box is open
+  const [loading, setLoading] = useState(true);  // Loading state while fetching comments
+  const [showSignInModal, setShowSignInModal] = useState(false);// Sign-in modal if user not logged in
+  const [editingCommentId, setEditingCommentId] = useState(null);; // Currently editing comment ID
+  const [editingText, setEditingText] = useState('');// Text for editing comment
+  const [showDropdownId, setShowDropdownId] = useState(null);// Dropdown for edit/delete shown for which comment
 
-  const { user } = useAuth();
-  console.log("userrrrr", user)
-  const navigate = useNavigate();
-  const location = useLocation();
-const inputRef = useRef();
+  const { user } = useAuth();   // Get logged-in user from context
+  const navigate = useNavigate();// For navigation on sign-in redirect
+  const location = useLocation(); // Get current URL path for redirect back after sign-in
+  const inputRef = useRef(); // Ref to auto focus comment input box
 
-useEffect(() => {
-  if (isCommentBoxOpen) {
-    inputRef.current?.focus();
-  }
-}, [isCommentBoxOpen]);
+  // Auto-focus input when comment box opens
+  useEffect(() => {
+    if (isCommentBoxOpen) {
+      inputRef.current?.focus();
+    }
+  }, [isCommentBoxOpen]);
+
+  // Fetch all comments for the given video
   useEffect(() => {
     const fetchComments = async () => {
       try {
@@ -41,16 +44,19 @@ useEffect(() => {
     fetchComments();
   }, [videoId]);
 
+
+  // Handle clicking on "Add comment" box
   const handleCommentInputClick = () => {
     if (!user) {
-      setShowSignInModal(true);
+      setShowSignInModal(true);// Ask user to sign-in if not logged in
     } else {
-      setIsCommentBoxOpen(true);
+      setIsCommentBoxOpen(true);// Open comment input box
     }
   };
 
+  // API CALL: Add comment
   const handleAddComment = async () => {
-    if (!newComment.trim()) return;
+    if (!newComment.trim()) return;// Prevent empty comment submission
     try {
       const res = await axios.post(
         `http://localhost:5000/comments`,
@@ -61,9 +67,8 @@ useEffect(() => {
         },
         { withCredentials: true }
       );
-      const result = await axios.get(`http://localhost:5000/comments/video/${videoId}`);
-    setComments(result.data);
-      // setComments(prev => [...prev, res.data]);
+      //Updating comment list after successful insertion
+      setComments(prev => [...prev, res.data]);
       setNewComment('');
       setIsCommentBoxOpen(false);
     } catch (err) {
@@ -71,15 +76,18 @@ useEffect(() => {
     }
   };
 
+  // API CALL: Delete comment
   const handleDeleteComment = async (commentId) => {
     try {
       await axios.delete(`http://localhost:5000/comments/${commentId}`, { withCredentials: true });
+      // Remove deleted comment from state
       setComments(prev => prev.filter(c => c._id !== commentId));
     } catch (err) {
       console.error("Error deleting comment", err);
     }
   };
 
+  // API CALL: Edit comment
   const handleEditSubmit = async () => {
     if (!editingText.trim()) return;
     try {
@@ -88,37 +96,42 @@ useEffect(() => {
         { text: editingText },
         { withCredentials: true }
       );
-
+      // Update comment list with updated text
       setComments(prev =>
         prev.map(c => c._id === editingCommentId ? { ...c, text: res.data.text } : c)
       );
+      // Reset edit state
       setEditingCommentId(null);
       setEditingText('');
     } catch (err) {
       console.error("Error updating comment", err);
     }
   };
-
-  if (loading) return <Spinner/>;
+  // While loading show spinner
+  if (loading) return <Spinner />;
 
   return (
 
 
     <div className="mt-6">
+      {/* Total comments count */}
       <h2 className="font-semibold text-lg mb-3">{comments.length} Comments</h2>
-
-      {/* Add Comment Section */}
+{/* ------------------- ADD COMMENT SECTION ------------------- */}
+    
       <div className="mb-4 flex gap-2">
+        {/* User Avatar */}
         <div className="w-10 h-10 bg-gray-300 rounded-full flex-shrink-0">
           <img
-           src={user?.username 
-          ? `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username)}&background=random`
-          : "/default-avatar.jpg"}
+            src={user?.username
+              ? `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username)}&background=random`
+              : "/default-avatar.jpg"}
             alt={user?.username}
             className="w-10 h-10 rounded-full object-cover"
           />
         </div>
 
+        {/* Comment Input Box */}
+          {/* If comment box is closed, show 'Add comment...' placeholder */}
         {!isCommentBoxOpen ? (
           <div
             onClick={handleCommentInputClick}
@@ -128,13 +141,15 @@ useEffect(() => {
           </div>
         ) : (
           <div className="w-full">
+               {/* Input box for entering new comment */}
             <input
-             ref={inputRef}
+              ref={inputRef}
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               className="border-b w-full px-2 py-1 focus:outline-none "
               placeholder="Add a comment..."
             />
+           {/* Buttons: Cancel and Comment */}
             <div className="flex justify-end gap-3 mt-2">
               <button
                 onClick={() => {
@@ -159,13 +174,15 @@ useEffect(() => {
           </div>
         )}
       </div>
-
-      {/* Inline Sign In Popup */}
+ {/* ------------------- SIGN-IN MODAL ------------------- */}
+      {/* Sign In Modal Popup */}
       {showSignInModal && (
         <div className="relative">
           <div className="absolute top-0 left-0 bg-white shadow-lg p-6 rounded-lg w-80 z-50 border">
+
             <h2 className="text-lg font-semibold mb-2">Want to join the conversation?</h2>
             <p className="text-sm text-gray-600 mb-4">Sign in to continue</p>
+              {/* Sign In Button */}
             <button
               className="w-full bg-black text-white py-2 rounded text-md font-semibold"
               onClick={() => {
@@ -176,6 +193,7 @@ useEffect(() => {
             >
               Sign In
             </button>
+             {/* Cancel Button */}
             <button
               onClick={() => setShowSignInModal(false)}
               className="mt-3 text-sm text-gray-500"
@@ -186,8 +204,9 @@ useEffect(() => {
         </div>
       )}
 
-      {/* Comments List */}
+         {/* ------------------- COMMENTS LIST ------------------- */}
       <div className="space-y-5">
+         {/* Show message when no comments exist */}
         {comments.length === 0 ? (
           <p className="text-sm text-gray-400">No comments yet.</p>
         ) : (
@@ -204,13 +223,14 @@ useEffect(() => {
               {/* Comment Content */}
               <div className="flex-1">
                 <div className="flex items-center justify-between">
+                  {/* Username & Timestamp Row */}
                   <div className="flex items-center gap-2">
                     <span className="font-semibold text-sm">@{comment.userId?.username}</span>
                     <span className="text-xs text-gray-500">
                       {getTimeAgo(new Date(comment.createdAt))}
                     </span>
                   </div>
-
+                   {/* Edit/Delete Dropdown for Own Comments */}
                   {user && user._id === comment.userId?._id && (
                     <div className="relative">
                       <button
@@ -248,7 +268,7 @@ useEffect(() => {
                   )}
                 </div>
 
-                {/* Editable or Normal Comment */}
+           {/* Show either Edit Input or Comment Text */}
                 {editingCommentId === comment._id ? (
                   <>
                     <input
@@ -282,7 +302,7 @@ useEffect(() => {
                   <p className="text-sm">{comment.text}</p>
                 )}
 
-                {/* Actions Row */}
+                {/* Like / Dislike / Reply buttons */}
                 <div className="flex items-center gap-4 text-gray-500 text-sm mt-1">
                   <button><i className="fa-regular fa-thumbs-up"></i></button>
                   <button><i className="fa-regular fa-thumbs-down"></i></button>

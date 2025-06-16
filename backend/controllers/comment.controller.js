@@ -5,7 +5,8 @@ export const addComment = async (req, res) => {
   try {
     const newComment = new commentModel(req.body);
     const savedComment = await newComment.save();
-    res.status(201).json(savedComment);
+     const populatedComment = await savedComment.populate('userId', 'username');
+    res.status(201).json(populatedComment);
   } catch (err) {
     res.status(400).json({ message: "Error adding comment", error: err.message });
   }

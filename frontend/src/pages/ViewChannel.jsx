@@ -1,0 +1,344 @@
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
+import { useParams } from 'react-router-dom';
+import Spinner from '../components/Spinner';
+
+export default function ViewChannel() {
+    const [selectedVideo, setSelectedVideo] = useState(null);
+    const [selectedThumbnail, setSelectedThumbnail] = useState(null);
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [category, setCategory] = useState("");
+    const [isUploading, setIsUploading] = useState(false);
+    const [videos, setVideos] = useState([]);
+    const [channel, setChannel] = useState(null);
+    const [errors, setErrors] = useState({});
+    const [showModal, setShowModal] = useState(false);
+    const [showDropdownId, setShowDropdownId] = useState(null);
+    const [editingVideoId, setEditingVideoId] = useState(null);
+    const [editingTitle, setEditingTitle] = useState("");
+    const [editingDescription, setEditingDescription] = useState("");
+
+
+    const { id } = useParams();
+    const { user } = useAuth();
+
+    useEffect(() => {
+        if (user) {
+            fetchChannel();
+            fetchVideos();
+        }
+    }, [user]);
+
+    const fetchChannel = async () => {
+        try {
+            const res = await axios.get(`http://localhost:5000/channels/${id}`, { withCredentials: true });
+            setChannel(res.data);
+        } catch (err) {
+            console.error("Error fetching channel", err);
+        }
+    };
+
+    const fetchVideos = async () => {
+        try {
+            const res = await axios.get(`http://localhost:5000/videos/channel/${id}`);
+            console.log("Fetched Videos:", res.data);
+            setVideos(res.data);
+        } catch (err) {
+            console.error("Error fetching videos", err);
+        }
+    };
+    const handleEditSubmit = async (videoId) => {
+        try {
+            await axios.put(`http://localhost:5000/videos/${videoId}`, {
+                title: editingTitle,
+                description: editingDescription
+            }, { withCredentials: true });
+
+            fetchVideos(); // Refresh the list after update
+            setEditingVideoId(null);  // Close edit mode
+        } catch (err) {
+            console.error("Error updating video:", err);
+        }
+    };
+
+    const handleDeleteVideo = async (videoId) => {
+        try {
+            await axios.delete(`http://localhost:5000/videos/${videoId}`, { withCredentials: true });
+            fetchVideos();
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const validateForm = () => {
+        const newErrors = {};
+        if (!selectedVideo) newErrors.video = "Video file is required.";
+        if (!selectedThumbnail) newErrors.thumbnail = "Thumbnail file is required.";
+        if (!title.trim()) newErrors.title = "Title is required.";
+        if (!description.trim()) newErrors.description = "Description is required.";
+        if (!category.trim()) newErrors.category = "Category is required.";
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleUpload = async () => {
+        if (!validateForm()) return;
+        setIsUploading(true);
+        const formData = new FormData();
+        formData.append("videoFile", selectedVideo);
+        formData.append("thumbnailFile", selectedThumbnail);
+        formData.append("title", title);
+        formData.append("description", description);
+        formData.append("category", category);
+        formData.append("channelId", id);
+
+        try {
+            await axios.post("http://localhost:5000/videos/upload", formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+                withCredentials: true
+            });
+            alert("Video uploaded successfully!");
+            fetchVideos();
+            resetForm();
+            setShowModal(false);
+        } catch (err) {
+            console.error("Error uploading video", err);
+            alert("Video upload failed");
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
+    const resetForm = () => {
+        setSelectedVideo(null);
+        setSelectedThumbnail(null);
+        setTitle("");
+        setDescription("");
+        setCategory("");
+        setErrors({});
+    };
+
+    if (!channel) return <div className="flex justify-center items-center h-screen">Loading Channel...</div>;
+
+    return (
+        <div className="flex flex-col min-h-screen p-5">
+
+            {/* Banner */}
+            {channel.channelBanner ? (
+                // Banner Present
+                <>
+                    <div className="w-full h-40 bg-cover bg-center rounded-lg  object-cover" style={{ backgroundImage: `url(${channel.channelBanner})` }}>
+                        {/* <div className="w-full h-full bg-black bg-opacity-20 rounded-lg"></div> */}
+                    </div>
+
+                    <div className="flex items-center gap-6 px-12 mt-4 ">
+                        <div className="w-20 h-20 sm:w-38 sm:h-38 rounded-full overflow-hidden border-4 border-white shadow-md bg-white">
+                            <img src={channel.channelAvatar} alt="Profile" className="w-20 h-20 sm:w-38 sm:h-38 object-cover" />
+                        </div>
+
+                        <div>
+                            <h1 className="text-3xl font-bold">{channel.channelName}</h1>
+                            <p className="text-sm text-gray-400">{channel.subscribers} subscribers</p>
+                            <p className="text-sm text-gray-500 mt-1">{channel.description}</p>
+                        </div>
+                    </div>
+                </>
+            ) : (
+                // Banner Not Present
+                <div className="flex items-center gap-6 px-12 py-10">
+                    <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-md bg-white">
+                        <img src={channel.channelAvatar} alt="Profile" className="w-full h-full object-cover" />
+                    </div>
+
+                    <div>
+                        <h1 className="text-3xl font-bold">{channel.channelName}</h1>
+                        <p className="text-sm text-gray-400">{channel.subscribers} subscribers</p>
+                        <p className="text-sm text-gray-500 mt-1">{channel.description}</p>
+                    </div>
+                </div>
+            )}
+
+
+
+            {/* Create Video Section */}
+            <div className="flex justify-start py-8 border-dotted">
+                <div className="border border-gray-300 rounded-lg px-10 py-6 text-center  bg-white w-full">
+                    <p className="text-lg mb-4">Upload and share videos to engage with your audience!</p>
+                    <button onClick={() => setShowModal(true)}
+                        className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700">
+                        + Upload Video
+                    </button>
+                </div>
+            </div>
+
+            {/* Published Videos */}
+            <div className="px-2 mb-20">
+                <h2 className="text-2xl font-semibold mb-4">Published</h2>
+
+                <div className="space-y-4">
+                    {videos.length === 0 ? (
+                        <div className="text-center text-gray-500 py-10 text-lg">
+                            No published videos yet.
+                        </div>
+                    ) : (
+                        videos.map((video) => (
+                            <div key={video._id} className="flex items-center justify-between  rounded-lg shadow-md p-3 relative">
+
+                                {/* Thumbnail */}
+                                <img src={video.thumbnailUrl} alt={video.title} className="w-48 h-28 object-cover rounded" />
+
+                                {/* Video Info */}
+                                <div className="flex-1 px-4">
+                                    {editingVideoId === video._id ? (
+                                        <>
+                                            <div className="mb-2">
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                                                <input
+                                                    className="border w-full py-2 px-2 rounded"
+                                                    type="text"
+                                                    value={editingTitle}
+                                                    onChange={(e) => setEditingTitle(e.target.value)}
+                                                />
+                                            </div>
+
+                                            <div className="mb-2">
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                                <textarea
+                                                    className="border w-full py-2 px-2 rounded"
+                                                    value={editingDescription}
+                                                    onChange={(e) => setEditingDescription(e.target.value)}
+                                                />
+                                            </div>
+
+                                            <div className="flex justify-end gap-3 mt-2">
+                                                <button onClick={() => setEditingVideoId(null)} className="text-gray-500">Cancel</button>
+                                                <button
+                                                    onClick={() => handleEditSubmit(video._id)}
+                                                    className="bg-blue-600 text-white px-4 py-1 rounded">
+                                                    Save
+                                                </button>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <h3 className="font-semibold text-lg">{video.title}</h3>
+                                            <p className="text-sm text-gray-500">{channel.channelName}</p>
+                                            <p className="text-sm text-gray-400">{video.views} views • {new Date(video.uploadDate).toLocaleDateString()}</p>
+                                        </>
+                                    )}
+                                </div>
+
+                                {/* Three dot menu */}
+                                <div className="relative">
+                                    <button onClick={() => setShowDropdownId(showDropdownId === video._id ? null : video._id)} className='cursor-pointer width-1'>
+                                        <i className="fa-solid fa-ellipsis-vertical text-lg"></i>
+                                    </button>
+
+                                    {showDropdownId === video._id && (
+                                        <div className="absolute right-0 w-28 bg-white shadow rounded z-10">
+                                            <button
+                                                onClick={() => {
+                                                    setEditingVideoId(video._id);
+                                                    setEditingTitle(video.title);
+                                                    setEditingDescription(video.description);
+                                                    setShowDropdownId(null);
+                                                }}
+                                                className="block w-full text-left px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                                            >
+                                                <i className="fa-solid fa-pencil"></i> Edit
+                                            </button>
+                                            <button
+                                                onClick={() => handleDeleteVideo(video._id)}
+                                                className="block w-full text-left px-3 py-2 hover:bg-gray-100 text-red-500 cursor-pointer"
+                                            >
+                                                <i className="fa-solid fa-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+
+                            </div>
+                        )))}
+
+                </div>
+            </div>
+
+
+            {/* Upload Modal */}
+            {
+                showModal && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                        <div className="bg-white p-8 rounded-lg w-full max-w-xl shadow-lg">
+
+                            <h2 className="text-xl font-semibold mb-6 text-center">Upload New Video</h2>
+
+                            {/* Upload Form */}
+                            <div className="space-y-2">
+
+                                {/* Video File */}
+                                <div className="flex flex-col space-y-0.5">
+                                    <label className="font-medium text-sm">Select Video File</label>
+                                    <input type="file" onChange={(e) => setSelectedVideo(e.target.files[0])} className="border p-2 rounded" />
+                                    {errors.video && <p className="text-red-500 text-xs">{errors.video}</p>}
+                                </div>
+
+                                {/* Thumbnail File */}
+                                <div className="flex flex-col space-y-0.5">
+                                    <label className="font-medium text-sm">Select Thumbnail Image</label>
+                                    <input type="file" onChange={(e) => setSelectedThumbnail(e.target.files[0])} className="border p-2 rounded" />
+                                    {errors.thumbnail && <p className="text-red-500 text-xs">{errors.thumbnail}</p>}
+                                </div>
+
+                                {/* Title */}
+                                <div className="flex flex-col space-y-0.5">
+                                    <label className="font-medium text-sm">Title</label>
+                                    <input type="text" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)}
+                                        className="border p-2 rounded" />
+                                    {errors.title && <p className="text-red-500 text-xs">{errors.title}</p>}
+                                </div>
+
+                                {/* Description */}
+                                <div className="flex flex-col space-y-0.5">
+                                    <label className="font-medium text-sm">Description</label>
+                                    <input type="text" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)}
+                                        className="border p-2 rounded" />
+                                    {errors.description && <p className="text-red-500 text-xs">{errors.description}</p>}
+                                </div>
+
+                                {/* Category */}
+                                <div className="flex flex-col space-y-0.5">
+                                    <label className="font-medium text-sm">Category</label>
+                                    <input type="text" placeholder="Category" value={category} onChange={(e) => setCategory(e.target.value)}
+                                        className="border p-2 rounded" />
+                                    {errors.category && <p className="text-red-500 text-xs">{errors.category}</p>}
+                                </div>
+
+                                {/* Buttons */}
+                                <div className="flex justify-end space-x-3 pt-4">
+                                    <button onClick={() => setShowModal(false)} className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
+                                        Cancel
+                                    </button>
+
+                                    <button
+                                        onClick={handleUpload}
+                                        className={`px-6 py-2 rounded-lg text-white font-semibold ${isUploading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
+                                        disabled={isUploading}
+                                    >
+                                        {isUploading ? <Spinner /> : 'Upload Video'}
+                                    </button>
+                                </div>
+
+                            </div>
+
+
+
+                        </div>
+                    </div>
+                )
+            }
+
+        </div >
+    );
+}

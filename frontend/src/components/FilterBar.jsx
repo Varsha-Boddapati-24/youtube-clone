@@ -1,23 +1,24 @@
 import { useState, useRef } from "react";
-
+// List of filter categories
 const filters = [
   "All", "Music", "Gaming", "News", "Sports", "Movies",
   "Education", "Coding", "Comedy", "Technology", "Health", "Food"
 ];
 
 export default function FilterBar({ onFilterChange }) {
-  const [activeFilter, setActiveFilter] = useState("All");
-  const scrollRef = useRef(null);
+  const [activeFilter, setActiveFilter] = useState("All");// Active selected filter state
+  const scrollRef = useRef(null); // Ref to scrollable container
 
+   // Handle filter click
   const handleClick = (filter) => {
-    setActiveFilter(filter);
-    onFilterChange(filter);
+    setActiveFilter(filter);  // Update selected filter in state
+    onFilterChange(filter);    // Pass selected filter to parent component via callback
   };
-
+// Scroll left by 300px
   const scrollLeft = () => {
     scrollRef.current?.scrollBy({ left: -300, behavior: "smooth" });
   };
-
+ // Scroll right by 300px
   const scrollRight = () => {
     scrollRef.current?.scrollBy({ left: 300, behavior: "smooth" });
   };
@@ -25,7 +26,7 @@ export default function FilterBar({ onFilterChange }) {
   return (
     <div className="sticky top-0  bg-white  py-3">
 
-      {/* Fixed-width wrapper that sticks to left and is responsive */}
+       {/* Responsive container that centers content */}
       <div className="relative w-full max-w-[640px] md:max-w-[768px] lg:max-w-[950px] xl:max-w-[1200px] px-4 flex items-center">
 
         {/* Left Arrow */}
@@ -46,7 +47,7 @@ export default function FilterBar({ onFilterChange }) {
               msOverflowStyle: "none"
             }}
           >
-
+  {/* Render all filters as buttons */}
             {filters.map((filter) => (
               <button
                 key={filter}

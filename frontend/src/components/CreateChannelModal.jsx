@@ -4,28 +4,39 @@ import { useAuth } from "../context/AuthContext";
 
 
 export default function CreateChannelModal({ onClose }) {
-  const [channelName, setChannelName] = useState("");
-  const [description, setDescription] = useState("");
-  const [channelBanner, setChannelBanner] = useState("");
-   const [channelAvatar, setChannelAvatar] = useState(""); 
-  const [avatarPreview, setAvatarPreview] = useState(null);
-  const [successMessage, setSuccessMessage] = useState("");
+    // States to store form fields
+ const [channelName, setChannelName] = useState("");      // Channel Name input
+  const [description, setDescription] = useState("");      // Channel Description input
+const [selectedAvatarFile, setSelectedAvatarFile] = useState(null);
+  const [selectedBannerFile, setSelectedBannerFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(null); // Local preview for selected avatar file
+  const [successMessage, setSuccessMessage] = useState(""); // Success message after creation
+  const [formError, setFormError] = useState("");          // Form validation or server errors
 
-  const [formError, setFormError] = useState("");
-  const { fetchUser } = useAuth();
+  const { fetchUser } = useAuth(); // Used to refresh user data after successful channel creation
 
-
+ // Handle file input change for avatar upload
   const handleFileChange = (e) => {
     const file = e.target.files[0];
+    console.log("file",file)
     if (file) {
+       setSelectedAvatarFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-         setChannelAvatar(reader.result);   
-        setAvatarPreview(reader.result);
+        setAvatarPreview(reader.result);// Save base64 string for preview
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file);// Convert file into base64 string
     }
   };
+
+   const handleBannerFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedBannerFile(file);
+    }
+  };
+
+  // Client-side form validation
   const validate = () => {
     if (!channelName.trim()) {
       setFormError("Channel name is required.");
@@ -39,31 +50,34 @@ export default function CreateChannelModal({ onClose }) {
     return true;
   };
 
+  // Submit channel creation form
   const handleSubmit = async () => {
     setFormError("");
     if (!validate()) return
     try {
-      console.log("channelAvatar",channelAvatar)
-      const res = await axios.post(
-        "http://localhost:5000/channels/create",
-        {
-          channelName,
-          channelAvatar,
-          description,
-          channelBanner,
-        },
-        {
-          withCredentials: true,
-        }
-      );
+      const formData = new FormData();
+      formData.append("channelName", channelName);
+      formData.append("description", description);
+      if (selectedAvatarFile) formData.append("channelAvatar", selectedAvatarFile);
+      if (selectedBannerFile) formData.append("channelBanner", selectedBannerFile);
+      // API call to create new channel
+   const res = await axios.post("http://localhost:5000/channels/create", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
+      });
+      // On successful channel creation
       setSuccessMessage("🎉 Channel created successfully!");
 
-      await fetchUser();
-      setTimeout(() => {
+      await fetchUser();// Refresh user context data to reflect new channel
+
+  // Close modal after short delay
+ setTimeout(() => {
         onClose();
       }, 1500);
     } catch (err) {
       console.error(err);
+
+       // Handle server errors
       if (err.response && err.response.data?.message) {
         setFormError(err.response.data.message);
       } else {
@@ -81,8 +95,10 @@ export default function CreateChannelModal({ onClose }) {
           &times;
         </button>
 
-        {/* Avatar + Upload */}
+      {/* ------------------ AVATAR SELECTION ------------------- */}
         <div className="flex flex-col items-center mb-5">
+
+            {/* Avatar Preview or Placeholder Icon */}
           <div className="w-24 h-24 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-4xl shadow">
             {avatarPreview ? (
               <img src={avatarPreview} alt="Avatar" className="rounded-full w-full h-full object-cover" />
@@ -90,14 +106,15 @@ export default function CreateChannelModal({ onClose }) {
               <i className="fa-solid fa-user"></i>
             )}
           </div>
+            {/* Avatar Upload Button */}
           <label className="mt-2 text-sm text-blue-600 font-medium cursor-pointer hover:underline">
             Select Picture
             <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
           </label>
         </div>
-
-        {/* Form */}
+ {/* ------------------ FORM INPUTS ------------------- */}
         <div className="space-y-3">
+           {/* Channel Name Input */}
           <input
             type="text"
             placeholder="Channel Name"
@@ -105,21 +122,18 @@ export default function CreateChannelModal({ onClose }) {
             onChange={(e) => setChannelName(e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
           />
-
+ {/* Channel Description Input */}
           <textarea
             placeholder="Description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
           />
-
-          <input
-            type="text"
-            placeholder="Banner Image URL (optional)"
-            value={channelBanner}
-            onChange={(e) => setChannelBanner(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
-          />
+  {/* Channel Banner Image URL (optional) */}
+         <div className="flex flex-col">
+  <label className="text-sm font-medium mb-1">Select Banner Image</label>
+  <input type="file" accept="image/*" onChange={handleBannerFileChange} />
+</div>
 
           {/* Terms Notice */}
           <p className="text-xs text-gray-500 mt-2">
@@ -127,6 +141,7 @@ export default function CreateChannelModal({ onClose }) {
             <span className="text-blue-600 underline cursor-pointer">terms and conditions</span>.
           </p>
         </div>
+          {/* ------------------ SUCCESS & ERROR MESSAGES ------------------- */}
         {successMessage && (
           <div className="text-green-600 text-sm mt-3 font-medium text-center">
             {successMessage}

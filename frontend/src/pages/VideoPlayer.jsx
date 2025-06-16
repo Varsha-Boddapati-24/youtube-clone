@@ -4,7 +4,7 @@ import axios from 'axios';
 import CommentsSection from '../components/CommentsSection';
 import SuggestedVideos from '../components/SuggestedVideos';
 import VideoInfoSection from '../components/VideoInfoSection';
-
+import Spinner from '../components/Spinner';
 export default function VideoPlayerPage() {
   const { id } = useParams();
   console.log("id",id)
@@ -29,7 +29,7 @@ const [suggested, setSuggested] = useState([]);
     fetchData();
   }, [id]);
 
-  if (!video) return <p>Loading...</p>;
+  if (!video) return <Spinner/>;
 
   return (
     <div className="flex flex-col lg:flex-row gap-8 p-4">
@@ -48,12 +48,7 @@ const [suggested, setSuggested] = useState([]);
 
       {/* Right section */}
       <div className="w-full lg:w-1/3">
-         {/* <h2 className="font-semibold text-lg mb-4">Suggested Videos</h2>
-        <div className="flex flex-col gap-4">
-          {suggested.map(video => (
-            <SuggestedVideoCard key={video._id} video={video} />
-          ))}
-        </div> */}
+
         <SuggestedVideos videos={suggested} />
 
       </div>
