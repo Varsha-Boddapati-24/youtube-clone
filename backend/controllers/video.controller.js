@@ -12,7 +12,7 @@ export const getAllVideos = async (req, res) => {
     }
     
     const videos = await videoModel.find(query)
-    .populate('channelId', 'channelName')
+    .populate('channelId', 'channelName channelAvatar')
       .populate('uploader', 'username');
 // console.log("videos",video[0])
     res.json(videos);
@@ -26,7 +26,7 @@ export const getAllVideos = async (req, res) => {
 export const getVideoById = async (req, res) => {
   try {
     const video = await videoModel.findById(req.params.id)
-      .populate('channelId', 'channelName')
+      .populate('channelId', 'channelName channelAvatar')
       .populate('uploader', 'username');
 
     if (!video) return res.status(404).json({ message: "Video not found" });

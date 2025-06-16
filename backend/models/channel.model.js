@@ -7,6 +7,11 @@ const channelSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    
+    channelAvatar: {
+      type: String,  
+      default: "",   
+    },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

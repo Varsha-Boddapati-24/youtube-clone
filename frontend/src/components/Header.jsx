@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate,useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import CreateChannelModal from "./createChannelModal.jsx";
 
 import { useAuth } from "../context/AuthContext.jsx";
@@ -13,14 +13,26 @@ export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
   const [showMenu, setShowMenu] = useState(false);
   const [showChannelModal, setShowChannelModal] = useState(false);
   const navigate = useNavigate()
-    const location = useLocation();
+  const location = useLocation();
   const menuRef = useRef(null);
-   const handleSearch = () => {
-    console.log("inside query ",query)
-    if(query.trim()) {
+  const handleSearch = () => {
+    console.log("inside query ", query)
+    if (query.trim()) {
       navigate(`/search?q=${encodeURIComponent(query)}`);
     }
   }
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const urlQuery = params.get("q") || "";
+    setQuery(urlQuery);
+  }, [location.search]);
+
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
 
   useClickOutside([menuRef], () => setShowMenu(false), showMenu);
   return (
@@ -31,10 +43,10 @@ export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
             <button onClick={() => setShowSearch(false)} className="text-xl text-gray-700 mr-2">
               <i className="fa-solid fa-arrow-left"></i>
             </button>
-            <input type="text" placeholder="Search"  value={query}  onChange={(e) => setQuery(e.target.value)}
+            <input type="text" placeholder="Search" value={query} onKeyDown={handleKeyDown} onChange={(e) => setQuery(e.target.value)}
               className="flex-grow px-4 py-2 border border-gray-300 rounded-full focus:outline-none"
             />
-            <button className=" py-2 ml-2 hover:bg-gray-100 rounded-full"  onClick={handleSearch}>
+            <button className=" py-2 ml-2 hover:bg-gray-100 rounded-full" onClick={handleSearch}>
               <i className="fa-solid fa-magnifying-glass text-lg text-gray-700"></i>
             </button>
           </div>
@@ -52,8 +64,8 @@ export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
 
             {/* Middle: desktop search bar */}
             <div className=" hidden sm:flex items-center flex-1 mx-4 max-w-xl  focus-within:border-black">
-              <input type="text" placeholder="Search" value={query}  onChange={(e) => setQuery(e.target.value)} className="w-full px-4 py-2 border  border-gray-300  rounded-l-full  focus:outline-none focus:border-black" />
-              <button  onClick={handleSearch} className="h-full px-4 py-2 border  border-gray-300  rounded-r-full  hover:bg-gray-100">
+              <input type="text" placeholder="Search" value={query} onKeyDown={handleKeyDown} onChange={(e) => setQuery(e.target.value)} className="w-full px-4 py-2 border  border-gray-300  rounded-l-full  focus:outline-none focus:border-black" />
+              <button onClick={handleSearch} className="h-full px-4 py-2 border  border-gray-300  rounded-r-full  hover:bg-gray-100">
                 <i className="fa-solid fa-magnifying-glass text-lg  text-gray-700"></i>
               </button>
 
@@ -123,7 +135,7 @@ export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
                         onClick={async () => {
                           await signout();
                           setShowMenu(false);
-                           navigate("/"); 
+                          navigate("/");
                         }}
                         className="flex items-center gap-2 w-full text-left text-red-600 hover:bg-red-50 p-2 mt-2 rounded text-sm sm:text-base cursor-pointer" >
                         <i className="fa-solid fa-arrow-right-to-bracket"> </i> Sign Out
@@ -169,7 +181,7 @@ export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
           </button>
         </div> */}
       </header>
-       {/* Place the modal rendering right here, outside the header but inside the component */}
+      {/* Place the modal rendering right here, outside the header but inside the component */}
       {showChannelModal && (
         <CreateChannelModal
           onClose={() => setShowChannelModal(false)}

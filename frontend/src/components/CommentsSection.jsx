@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate, useLocation } from "react-router-dom";
 import { getTimeAgo } from '../utils/dateUtils';
 import { useRef } from "react";
+import Spinner from './Spinner';
 
 export default function CommentsSection({ videoId }) {
   const [comments, setComments] = useState([]);
@@ -98,7 +99,7 @@ useEffect(() => {
     }
   };
 
-  if (loading) return <p>Loading comments...</p>;
+  if (loading) return <Spinner/>;
 
   return (
 
@@ -110,7 +111,9 @@ useEffect(() => {
       <div className="mb-4 flex gap-2">
         <div className="w-10 h-10 bg-gray-300 rounded-full flex-shrink-0">
           <img
-            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user? user.username: "")}&background=random`}
+           src={user?.username 
+          ? `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username)}&background=random`
+          : "/default-avatar.jpg"}
             alt={user?.username}
             className="w-10 h-10 rounded-full object-cover"
           />

@@ -1,12 +1,23 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-import VideoCard from "../components/VideoCard";
+import { getTimeAgo } from "../utils/dateUtils";
+import SearchCard from "../components/SearchCard";
+import FilterBar from "../components/FilterBar";
 
 export default function Search() {
   const location = useLocation();
   const query = new URLSearchParams(location.search).get("q");
   const [videos, setVideos] = useState([]);
+   const [activeFilter, setActiveFilter] = useState("All");
+  
+    const handleFilterChange = (filter) => {
+      setActiveFilter(filter);
+    };
+  
+    const filteredVideos = activeFilter === "All"
+      ? videos
+      : videos.filter((video) => video.category === activeFilter);
 
   useEffect(() => {
     const fetchResults = async () => {
@@ -17,10 +28,14 @@ export default function Search() {
   }, [query]);
 
   return (
-    <div className="p-4 grid gap-6 grid-cols-[repeat(auto-fit,minmax(250px,1fr))]">
-      {videos.map(video => (
-        <VideoCard key={video._id} {...video} />
+    <>
+  
+      <FilterBar onFilterChange={handleFilterChange} />
+    <div className="p-4 ">
+      {filteredVideos.map((video) => (
+     <SearchCard key={video._id} video={video} />
       ))}
     </div>
+      </>
   );
 }

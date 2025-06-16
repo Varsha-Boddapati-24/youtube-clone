@@ -17,7 +17,7 @@ dotenv.config()
 const app = express();
 // ------------------ MIDDLEWARES ------------------
 // Middleware to parse incoming JSON request bodies
-app.use(express.json())
+app.use(express.json({ limit: '10mb' }))
 app.use(cors(
     {
         origin: 'http://localhost:5173',

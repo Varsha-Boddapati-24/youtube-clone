@@ -7,6 +7,7 @@ export default function CreateChannelModal({ onClose }) {
   const [channelName, setChannelName] = useState("");
   const [description, setDescription] = useState("");
   const [channelBanner, setChannelBanner] = useState("");
+   const [channelAvatar, setChannelAvatar] = useState(""); 
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -19,6 +20,7 @@ export default function CreateChannelModal({ onClose }) {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
+         setChannelAvatar(reader.result);   
         setAvatarPreview(reader.result);
       };
       reader.readAsDataURL(file);
@@ -41,10 +43,12 @@ export default function CreateChannelModal({ onClose }) {
     setFormError("");
     if (!validate()) return
     try {
+      console.log("channelAvatar",channelAvatar)
       const res = await axios.post(
         "http://localhost:5000/channels/create",
         {
           channelName,
+          channelAvatar,
           description,
           channelBanner,
         },
@@ -53,7 +57,7 @@ export default function CreateChannelModal({ onClose }) {
         }
       );
       setSuccessMessage("🎉 Channel created successfully!");
-      // Optional: refresh user context if you have that logic
+
       await fetchUser();
       setTimeout(() => {
         onClose();

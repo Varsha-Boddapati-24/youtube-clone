@@ -14,14 +14,14 @@ export default function Sidebar({ isOpen, onClose ,sidebarRef}) {
       ${isOpen ? "w-45" : "w-11"}
     fixed  md:relative z-10`}
         >
-            <ul className="space-y-4">
+            <ul className="space-y-4 ">
                 {sidebarItems.map(({ label, icon , path }) => (
                     <li
                         key={label}
                         className="flex items-center gap-4 p-2 hover:bg-gray-100 rounded cursor-pointer transition"
                     >
                         {path ? (
-              <Link to={path} className="flex items-center gap-4">
+              <Link to={path} className="flex items-center gap-4  w-full" onClick={onClose}>
                 <i className={`${icon} text-lg`}></i>
                 {isOpen && <span className="text-sm font-medium">{label}</span>}
               </Link>

@@ -46,11 +46,6 @@ export default function FilterBar({ onFilterChange }) {
               msOverflowStyle: "none"
             }}
           >
-       {/* <style>{`
-              div::-webkit-scrollbar {
-                display: none;
-              }
-            `}</style> */}
 
             {filters.map((filter) => (
               <button

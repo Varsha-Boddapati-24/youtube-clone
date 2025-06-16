@@ -2,6 +2,7 @@ import FilterBar from "../components/FilterBar";
 import VideoGrid from "../components/VideoGrid";
 import { useState,useEffect } from "react";
 import axios from "axios";
+import Spinner from "../components/Spinner";
 
 function Home() {
   const [filter, setFilter] = useState("All");
@@ -30,7 +31,7 @@ function Home() {
     <>
          <FilterBar onFilterChange={setFilter} activeFilter={filter} />
       <div className="p-4">
-         {loading ? <p>Loading...</p> : <VideoGrid videos={videos} />}
+         {loading ? <Spinner/> : <VideoGrid videos={videos} />}
       </div>
     </>
 

@@ -3,7 +3,7 @@ import userModel from "../models/user.model.js";
 
 export const createChannel = async (req, res) => {
   try {
-    const { channelName, description, channelBanner } = req.body;
+    const { channelName, channelAvatar,description, channelBanner } = req.body;
     const userId = req.user.id;
 
     const existingUser = await userModel.findById(userId); 
@@ -13,6 +13,7 @@ export const createChannel = async (req, res) => {
 
     const channel = new channelModel({
       channelName,
+      channelAvatar,
       description,
       channelBanner,
       owner: userId,

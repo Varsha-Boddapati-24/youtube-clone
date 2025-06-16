@@ -58,7 +58,16 @@ export default function VideoInfoSection({ video }) {
             <div className="flex gap-5 items-center mb-4">
                 <div className="flex items-center gap-3">
                     {/* Channel Avatar (static placeholder for now) */}
-                    <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
+                    <div className="w-10 h-10 bg-gray-300 rounded-full">
+                      {console.log("video.channelId.channelAvatar",video.channelId)}
+                         <img
+                            src={video.channelId?.channelAvatar
+                                ? video.channelId.channelAvatar
+                                : `https://ui-avatars.com/api/?name=${encodeURIComponent(video.channelId.channelName)}&background=random`}
+                            alt={video.channelId.channelName}
+                            className="w-10 h-10 rounded-full object-cover"
+                        />
+                    </div>
 
                     <div >
                         <p className="font-semibold">{video.channelId?.channelName}</p>
