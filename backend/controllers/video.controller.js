@@ -2,26 +2,32 @@ import channelModel from "../models/channel.model.js";
 import videoModel from "../models/video.model.js";  
 
 
-// GET /videos - fetch all videos
+// GET /videos - Fetch all videos with optional category filter and pagination
+
 export const getAllVideos = async (req, res) => {
   try {
-     const { category } = req.query; 
-
-    let query = {};
-    if (category && category !== "All") {
-      query.category = category;  
-    }
-    
-    const videos = await videoModel.find(query).lean()
-    .populate('channelId', 'channelName channelAvatar')
+     // Build query only if specific category (other than "All") is selected
+    const { category, page = 1, limit = 10 } = req.query;
+    const query = category && category !== "All" ? { category } : {};
+// Fetch videos with pagination and populate related info
+    const videos = await videoModel.find(query)
+      .skip((page - 1) * limit)
+      .limit(Number(limit))
+      .lean()
+      .populate('channelId', 'channelName channelAvatar')
       .populate('uploader', 'username');
-// console.log("videos",video[0])
-    res.json(videos);
+ // Get total count of videos for pagination logic
+    const total = await videoModel.countDocuments(query);
+
+    res.json({
+      videos,
+      hasMore: page * limit < total,
+    });
   } catch (err) {
-    console.log(err)
     res.status(500).json({ message: "Error fetching videos", error: err.message });
   }
 };
+
 
 // GET /videos/:id - fetch a single video
 export const getVideoById = async (req, res) => {
@@ -45,7 +51,7 @@ export const getVideosByChannelId = async (req, res) => {
     const { id } = req.params;
   console.log("id",id)
 
-    // all videos that belong to this channel
+  // Find all videos where channelId matches the given id
     const videos = await videoModel.find({ channelId: id });
 
     res.status(200).json(videos);
@@ -54,11 +60,12 @@ export const getVideosByChannelId = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
+//GET /videos/search?query=... - Search videos by title using regex
 
 export const searchVideos = async (req, res) => {
   try {
     const { query } = req.query;
+     // Use regex to perform case-insensitive title search
     const videos = await videoModel.find({
       title: { $regex: query, $options: "i" } 
     }).populate('channelId', 'channelName').populate('uploader', 'username');
@@ -99,7 +106,7 @@ export const deleteVideo = async (req, res) => {
 };
 
 
-
+// POST /videos/:id/like - Like a video or toggle like if already liked
 export const likeVideo = async (req, res) => {
   const videoId = req.params.id;
   const userId = req.user.id; // From auth middleware
@@ -110,6 +117,7 @@ export const likeVideo = async (req, res) => {
 
   // If already liked, remove like (toggle)
   if (video.likes.includes(userId)) {
+     // If already liked, remove like (toggle off)
     video.likes.pull(userId);
   } else {
     video.likes.push(userId);
@@ -124,8 +132,7 @@ export const likeVideo = async (req, res) => {
   });
 };
 
-
-// Dislike controller
+//POST /videos/:id/dislike - Dislike a video or toggle dislike if already disliked
 export const dislikeVideo = async (req, res) => {
   const videoId = req.params.id;
   const userId = req.user.id;
@@ -146,22 +153,21 @@ export const dislikeVideo = async (req, res) => {
     dislikes: video.dislikes
   });
 };
-
+// POST /videos/upload - Upload a new video (with file + metadata)
 export const uploadVideo = async (req, res) => {
   try {
     const { channelId, title, description, category } = req.body;
-
-    // Verify channel exists
     const channel = await channelModel.findById(channelId);
+     // Check if the provided channel ID exists
     if (!channel) {
       return res.status(400).json({ message: "Channel not found" });
     }
 
-    // Extract file urls from multer output
+   // Extract uploaded file paths from multer's req.files
     const videoUrl = req.files.videoFile[0].path;
     const thumbnailUrl = req.files.thumbnailFile[0].path;
 
-    // Create video document in DB
+    // Create new video document with metadata and file paths
     const newVideo = await videoModel.create({
       title,
       thumbnailUrl,

@@ -4,28 +4,37 @@ import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 export default function VideoInfoSection({ video }) {
-    const { user } = useAuth();
+    const { user } = useAuth(); // Get current user from AuthContext
     const navigate = useNavigate();
-    const location = useLocation();
+    const location = useLocation(); // To remember current path before redirecting
+    
+    // Store likes and dislikes count
     const [likes, setLikes] = useState(video.likes?.length);
     const [dislikes, setDislikes] = useState(video.dislikes?.length);
+      // Check if current user has liked/disliked
     const [hasLiked, setHasLiked] = useState(video.likes?.includes(user?._id));
     const [hasDisliked, setHasDisliked] = useState(video.dislikes?.includes(user?._id));
+     // Controls whether the login modal is shown
     const [showLikeSignInModal, setShowLikeSignInModal] = useState(false);
+    // Function to check if the user is logged in before allowing like/dislike
     const requireLogin = () => {
         if (!user) {
+             // If not logged in, show the sign-in modal
             setShowLikeSignInModal(true);
         }
         return false;
     };
+    // Function to handle liking a video
     const handleLike = async () => {
-        if (requireLogin()) return;
+        if (requireLogin()) return;//Block if not logged in
 
         try {
+                // Send POST request to like the video
             const res = await axios.post(`http://localhost:5000/videos/${video._id}/like`, {}, { withCredentials: true });
-            //   const result=await axios.post(`http://localhost:5000/videos/${video._id}`);
+             // Update state with latest like/dislike counts from backend
             setLikes(res.data.likes?.length);
             setDislikes(res.data.dislikes?.length);
+               // Check if user is now in likes/dislikes list
             setHasLiked(res.data.likes?.includes(user._id));
             setHasDisliked(res.data.dislikes?.includes(user._id));
 
@@ -33,15 +42,18 @@ export default function VideoInfoSection({ video }) {
             console.error("Error liking video", err);
         }
     };
-
+// Function to handle disliking a video
     const handleDislike = async () => {
+         // Exit early if user is not logged in
         if (requireLogin()) return;
 
         try {
+                    // Send POST request to dislike the video
             const res = await axios.post(`http://localhost:5000/videos/${video._id}/dislike`, {}, { withCredentials: true });
-
+  // Update state with new counts
             setLikes(res.data.likes?.length);
             setDislikes(res.data.dislikes?.length);
+            // Update UI indicators based on user's action
             setHasLiked(res.data?.likes?.includes(user._id));
             setHasDisliked(res.data?.dislikes?.includes(user._id));
 
@@ -57,9 +69,9 @@ export default function VideoInfoSection({ video }) {
             {/* Channel Info + Subscribe */}
             <div className="flex gap-5 items-center mb-4">
                 <div className="flex items-center gap-3">
-                    {/* Channel Avatar (static placeholder for now) */}
+                    {/* Channel Avatar  */}
                     <div className="w-10 h-10 bg-gray-300 rounded-full">
-                      {console.log("video.channelId.channelAvatar",video.channelId)}
+                     
                          <img
                             src={video.channelId?.channelAvatar
                                 ? video.channelId.channelAvatar

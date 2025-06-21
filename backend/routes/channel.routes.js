@@ -4,6 +4,7 @@ import authenticateUser from "../middlewares/authenticate.js";
 import upload from "../middlewares/multer.js";
 const router = express.Router();
 
+// @route   POST /channels/create - Create a new channel (requires auth)
 router.post(
   "/create",
   authenticateUser,
@@ -13,7 +14,7 @@ router.post(
   ]),
   createChannel
 );
-
+// @route   GET /channels/:channelId - Get channel details by ID
 router.get("/:channelId", getChannelById);
 
 export default router;

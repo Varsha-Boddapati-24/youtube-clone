@@ -1,6 +1,6 @@
 import commentModel from "../models/comment.model.js";
 
-// Add Comment
+// POST /comments - Add a new comment to a video
 export const addComment = async (req, res) => {
   try {
     const newComment = new commentModel(req.body);
@@ -12,7 +12,7 @@ export const addComment = async (req, res) => {
   }
 };
 
-// Edit Comment
+// PUT /comments/:id - Edit an existing comment by its ID
 export const editComment = async (req, res) => {
   try {
     const updatedComment = await commentModel.findByIdAndUpdate(
@@ -27,7 +27,7 @@ export const editComment = async (req, res) => {
   }
 };
 
-// Delete Comment
+// DELETE /comments/:id - Delete a comment by its ID
 export const deleteComment = async (req, res) => {
   try {
     const deleted = await commentModel.findByIdAndDelete(req.params.id);
@@ -38,13 +38,12 @@ export const deleteComment = async (req, res) => {
   }
 };
 
-// Get all comments for a video
+// GET /comments/video/:videoId - Fetch all comments for a specific video
 export const getCommentsByVideoId = async (req, res) => {
   try {
     const comments = await commentModel.find({ videoId: req.params.videoId })
       .populate('userId', 'username');
       console.log("comments",comments)
-    // if (comments.length === 0) return res.status(404).json({ message: "Comments not found" });
     res.json(comments);
   } catch (err) {
     res.status(500).json({ message: "Error fetching comments", error: err.message });

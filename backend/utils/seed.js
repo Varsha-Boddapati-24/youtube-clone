@@ -377,7 +377,7 @@ const videoData=[
  const seed = async () => {
   try {
     await mongoose.connect(MONGO_URI);
-    console.log("✅ Connected to MongoDB");
+    console.log(" Connected to MongoDB");
 
     // Cleanup
     await userModel.deleteMany();

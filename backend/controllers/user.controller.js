@@ -74,7 +74,7 @@ export const loginUser = async (req, res) => {
         res.status(500).json({ error: "Login failed" });
     }
 };
-
+// POST /user/signout - Clear auth token cookie and logout user
 
 export const signoutUser = (req, res) => {
     try {
@@ -91,9 +91,7 @@ export const signoutUser = (req, res) => {
         res.status(500).json({ error: "Logout failed" });
     }
 };
-
-
-
+// GET /user - Get authenticated user details (excluding password)
 export const getUser = async (req, res) => {
     try {
 

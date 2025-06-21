@@ -21,12 +21,14 @@ const app = express();
 // ------------------ MIDDLEWARES ------------------
 // Middleware to parse incoming JSON request bodies
 app.use(express.json({ limit: '10mb' }))
+// Enable CORS for frontend at localhost:5173 with credentials like cookies
 app.use(cors(
     {
         origin: 'http://localhost:5173',
         credentials: true,
     }
 ));
+// Middleware to parse cookies from incoming requests
 app.use(cookieParser());
 
 
@@ -43,7 +45,7 @@ mongoose.connect(process.env.MONGO_URI)
  .then(async () => {
     console.log("Connected to MongoDB");
 
-    // Optional: Seed only if empty
+    //  Seed only if empty
     const userCount = await userModel.countDocuments();
     const channelCount = await channelModel.countDocuments();
     const videoCount = await videoModel.countDocuments();

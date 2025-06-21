@@ -5,34 +5,41 @@ import { useParams } from 'react-router-dom';
 import Spinner from '../components/Spinner';
 
 export default function ViewChannel() {
+    // Holds the selected video file for upload
     const [selectedVideo, setSelectedVideo] = useState(null);
+    // Holds the selected thumbnail image
     const [selectedThumbnail, setSelectedThumbnail] = useState(null);
+    // Tracks title, description, category of the new video
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [category, setCategory] = useState("");
+    // Upload progress and form feedback
     const [isUploading, setIsUploading] = useState(false);
-    const [videos, setVideos] = useState([]);
-    const [channel, setChannel] = useState(null);
-    const [errors, setErrors] = useState({});
-    const [showModal, setShowModal] = useState(false);
-    const [showDropdownId, setShowDropdownId] = useState(null);
-    const [editingVideoId, setEditingVideoId] = useState(null);
-    const [editingTitle, setEditingTitle] = useState("");
-    const [editingDescription, setEditingDescription] = useState("");
-    const [isLoading, setIsLoading] = useState(true);
     const [uploadSuccess, setUploadSuccess] = useState("");
+    // Holds all videos uploaded by the channel
 
+    const [videos, setVideos] = useState([]);
+    // Stores the channel's profile details
+    const [channel, setChannel] = useState(null);
+    // Stores validation errors for the upload form fields (e.g., missing title or thumbnail)
+    const [errors, setErrors] = useState({});
+    // Controls the visibility of the video upload modal
+    const [showModal, setShowModal] = useState(false);
+    // Tracks which video's options dropdown (3-dot menu) is currently open
+    const [showDropdownId, setShowDropdownId] = useState(null);
+    // Holds the ID of the video currently in edit mode (inline editing)
+    const [editingVideoId, setEditingVideoId] = useState(null);
+    // Temporarily stores the new title input value during editing
+    const [editingTitle, setEditingTitle] = useState("");
+    // Temporarily stores the new description input value during editing
+    const [editingDescription, setEditingDescription] = useState("");
+    // Tracks whether the page is loading channel and video data
+    const [isLoading, setIsLoading] = useState(true);
 
     const { id } = useParams();
     const { user } = useAuth();
-
-    // useEffect(() => {
-    //     if (user) {
-    //         fetchChannel();
-    //         fetchVideos();
-    //     }
-    // }, [user]);
-
+    
+    // Fetch channel and videos once user is logged in
     useEffect(() => {
         if (user) {
             const loadData = async () => {
@@ -44,7 +51,7 @@ export default function ViewChannel() {
         }
     }, [user]);
 
-
+    // Fetch the channel's profile and metadata using its ID
     const fetchChannel = async () => {
         try {
             const res = await axios.get(`http://localhost:5000/channels/${id}`, { withCredentials: true });
@@ -53,7 +60,7 @@ export default function ViewChannel() {
             console.error("Error fetching channel", err);
         }
     };
-
+    // Fetch all videos uploaded by the channel
     const fetchVideos = async () => {
         try {
             const res = await axios.get(`http://localhost:5000/videos/channel/${id}`);
@@ -63,6 +70,7 @@ export default function ViewChannel() {
             console.error("Error fetching videos", err);
         }
     };
+
     const handleEditSubmit = async (videoId) => {
         try {
             await axios.put(`http://localhost:5000/videos/${videoId}`, {
@@ -96,11 +104,12 @@ export default function ViewChannel() {
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
-
+    // Upload video to server
     const handleUpload = async () => {
         if (!validateForm()) return;
         setIsUploading(true);
         setUploadSuccess("");
+        // Create multipart/form-data for file upload
         const formData = new FormData();
         formData.append("videoFile", selectedVideo);
         formData.append("thumbnailFile", selectedThumbnail);
@@ -115,31 +124,30 @@ export default function ViewChannel() {
                 withCredentials: true
             });
             setUploadSuccess("🎉 Video uploaded successfully!");
-            fetchVideos();
+            fetchVideos();// Refresh video list
             resetForm();
-    setTimeout(() => {
-      setShowModal(false);
-      setUploadSuccess(""); // clear message after closing
-    }, 2000); // show message for 2 seconds
-           
+            setTimeout(() => {
+                setShowModal(false);
+                setUploadSuccess(""); // clear message after closing
+            }, 2000); // show message for 2 seconds
+
         } catch (err) {
             console.error("Error uploading video", err);
-            setUploadSuccess("❌ Video upload failed. Please try again.");
+            setUploadSuccess("Video upload failed. Please try again.");
         } finally {
             setIsUploading(false);
         }
     };
-
+    // Clear form fields after successful upload or cancel
     const resetForm = () => {
         setSelectedVideo(null);
         setSelectedThumbnail(null);
         setTitle("");
         setDescription("");
         setCategory("");
-        //  setUploadSuccess(" ");
         setErrors({});
     };
-
+    // Show loading spinner during initial data load
     if (isLoading) return (
         <div className="flex justify-center items-center h-screen">
             <Spinner />
@@ -150,19 +158,21 @@ export default function ViewChannel() {
     return (
         <div className="flex flex-col min-h-screen p-5">
 
-            {/* Banner */}
+            {/* ---------- Channel Banner Section ---------- */}
             {channel.channelBanner ? (
                 // Banner Present
                 <>
+                    {/* Display banner image as background */}
                     <div className="w-full h-40 bg-cover bg-center rounded-lg  object-cover" style={{ backgroundImage: `url(${channel.channelBanner})` }}>
                         {/* <div className="w-full h-full bg-black bg-opacity-20 rounded-lg"></div> */}
                     </div>
-
+                    {/* Display profile info below banner */}
                     <div className="flex items-center gap-6 px-12 mt-4 ">
+                        {/* Channel avatar */}
                         <div className="w-20 h-20 sm:w-38 sm:h-38 rounded-full overflow-hidden border-4 border-white shadow-md bg-white">
                             <img src={channel.channelAvatar} alt="Profile" className="w-20 h-20 sm:w-38 sm:h-38 object-cover" />
                         </div>
-
+                        {/* Channel name and description */}
                         <div>
                             <h1 className="text-3xl font-bold">{channel.channelName}</h1>
                             <p className="text-sm text-gray-400">{channel.subscribers} subscribers</p>
@@ -171,7 +181,7 @@ export default function ViewChannel() {
                     </div>
                 </>
             ) : (
-                // Banner Not Present
+                // When banner is NOT present (just avatar and details)
                 <div className="flex items-center gap-6 px-12 py-10">
                     <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-md bg-white">
                         <img src={channel.channelAvatar} alt="Profile" className="w-full h-full object-cover" />
@@ -191,6 +201,7 @@ export default function ViewChannel() {
             <div className="flex justify-start py-8 border-dotted">
                 <div className="border border-gray-300 rounded-lg px-10 py-6 text-center  bg-white w-full">
                     <p className="text-lg mb-4">Upload and share videos to engage with your audience!</p>
+                    {/* Upload modal toggle button */}
                     <button onClick={() => setShowModal(true)}
                         className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 cursor-pointer">
                         + Upload Video
@@ -198,7 +209,8 @@ export default function ViewChannel() {
                 </div>
             </div>
 
-            {/* Published Videos */}
+            {/* ---------- Published Videos Section ---------- */}
+
             <div className="px-2 mb-20">
                 <h2 className="text-2xl font-semibold mb-4">Published</h2>
 
@@ -217,7 +229,9 @@ export default function ViewChannel() {
                                 {/* Video Info */}
                                 <div className="flex-1 px-4">
                                     {editingVideoId === video._id ? (
+                                        // Edit Mode
                                         <>
+
                                             <div className="mb-2">
                                                 <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
                                                 <input
@@ -247,6 +261,7 @@ export default function ViewChannel() {
                                             </div>
                                         </>
                                     ) : (
+                                        // View Mode
                                         <>
                                             <h3 className="font-semibold text-lg">{video.title}</h3>
                                             <p className="text-sm text-gray-500">{channel.channelName}</p>
@@ -263,6 +278,7 @@ export default function ViewChannel() {
 
                                     {showDropdownId === video._id && (
                                         <div className="absolute right-0 w-28 bg-white shadow rounded z-10">
+                                            {/* Edit button */}
                                             <button
                                                 onClick={() => {
                                                     setEditingVideoId(video._id);
@@ -274,6 +290,7 @@ export default function ViewChannel() {
                                             >
                                                 <i className="fa-solid fa-pencil cursor-pointer"></i> Edit
                                             </button>
+                                            {/* Delete button */}
                                             <button
                                                 onClick={() => handleDeleteVideo(video._id)}
                                                 className="block w-full text-left px-3 py-2 hover:bg-gray-100 text-red-500 cursor-pointer"
@@ -291,7 +308,7 @@ export default function ViewChannel() {
             </div>
 
 
-            {/* Upload Modal */}
+            {/* ---------- Upload Modal ---------- */}
             {
                 showModal && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -299,17 +316,16 @@ export default function ViewChannel() {
 
                             <h2 className="text-xl font-semibold mb-6 text-center">Upload New Video</h2>
 
-                            {/* Upload Form */}
+                            {/* Upload Form Inputs */}
                             <div className="space-y-2">
 
                                 {/* Video File */}
                                 <div className="flex flex-col space-y-0.5">
                                     <label className="font-medium text-sm">Select Video File</label>
-                                    <input type="file"  onChange={(e) => {
-    const file = e.target.files[0];
-    // e.target.value = null; 
-    setSelectedVideo(file);
-  }} className="border p-2 rounded" />
+                                    <input type="file" onChange={(e) => {
+                                        const file = e.target.files[0];
+                                        setSelectedVideo(file);
+                                    }} className="border p-2 rounded" />
                                     {errors.video && <p className="text-red-500 text-xs">{errors.video}</p>}
                                 </div>
 
