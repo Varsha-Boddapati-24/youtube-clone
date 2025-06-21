@@ -37,7 +37,7 @@ const [suggested, setSuggested] = useState([]);
       <div className="flex-1">
         {/* Video Player + Info */}
         <div className="aspect-video mb-4 rounded-lg overflow-hidden">
-          <video controls className="w-full h-full object-cover" poster={video.thumbnailUrl}>
+          <video  key={video._id} controls preload="metadata" className="w-full h-full object-cover" poster={video.thumbnailUrl}>
             <source src={video.videoUrl} type="video/mp4" />
           </video>
         </div>

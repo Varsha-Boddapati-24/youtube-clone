@@ -19,17 +19,31 @@ export default function ViewChannel() {
     const [editingVideoId, setEditingVideoId] = useState(null);
     const [editingTitle, setEditingTitle] = useState("");
     const [editingDescription, setEditingDescription] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
+    const [uploadSuccess, setUploadSuccess] = useState("");
 
 
     const { id } = useParams();
     const { user } = useAuth();
 
+    // useEffect(() => {
+    //     if (user) {
+    //         fetchChannel();
+    //         fetchVideos();
+    //     }
+    // }, [user]);
+
     useEffect(() => {
         if (user) {
-            fetchChannel();
-            fetchVideos();
+            const loadData = async () => {
+                setIsLoading(true);
+                await Promise.all([fetchChannel(), fetchVideos()]);
+                setIsLoading(false);
+            };
+            loadData();
         }
     }, [user]);
+
 
     const fetchChannel = async () => {
         try {
@@ -86,6 +100,7 @@ export default function ViewChannel() {
     const handleUpload = async () => {
         if (!validateForm()) return;
         setIsUploading(true);
+        setUploadSuccess("");
         const formData = new FormData();
         formData.append("videoFile", selectedVideo);
         formData.append("thumbnailFile", selectedThumbnail);
@@ -99,13 +114,17 @@ export default function ViewChannel() {
                 headers: { 'Content-Type': 'multipart/form-data' },
                 withCredentials: true
             });
-            alert("Video uploaded successfully!");
+            setUploadSuccess("🎉 Video uploaded successfully!");
             fetchVideos();
             resetForm();
-            setShowModal(false);
+    setTimeout(() => {
+      setShowModal(false);
+      setUploadSuccess(""); // clear message after closing
+    }, 2000); // show message for 2 seconds
+           
         } catch (err) {
             console.error("Error uploading video", err);
-            alert("Video upload failed");
+            setUploadSuccess("❌ Video upload failed. Please try again.");
         } finally {
             setIsUploading(false);
         }
@@ -117,10 +136,16 @@ export default function ViewChannel() {
         setTitle("");
         setDescription("");
         setCategory("");
+        //  setUploadSuccess(" ");
         setErrors({});
     };
 
-    if (!channel) return <div className="flex justify-center items-center h-screen">Loading Channel...</div>;
+    if (isLoading) return (
+        <div className="flex justify-center items-center h-screen">
+            <Spinner />
+        </div>
+    );
+
 
     return (
         <div className="flex flex-col min-h-screen p-5">
@@ -167,7 +192,7 @@ export default function ViewChannel() {
                 <div className="border border-gray-300 rounded-lg px-10 py-6 text-center  bg-white w-full">
                     <p className="text-lg mb-4">Upload and share videos to engage with your audience!</p>
                     <button onClick={() => setShowModal(true)}
-                        className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700">
+                        className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 cursor-pointer">
                         + Upload Video
                     </button>
                 </div>
@@ -213,10 +238,10 @@ export default function ViewChannel() {
                                             </div>
 
                                             <div className="flex justify-end gap-3 mt-2">
-                                                <button onClick={() => setEditingVideoId(null)} className="text-gray-500">Cancel</button>
+                                                <button onClick={() => setEditingVideoId(null)} className="text-gray-500 cursor-pointer">Cancel</button>
                                                 <button
                                                     onClick={() => handleEditSubmit(video._id)}
-                                                    className="bg-blue-600 text-white px-4 py-1 rounded">
+                                                    className="bg-blue-600 text-white px-4 py-1 rounded cursor-pointer">
                                                     Save
                                                 </button>
                                             </div>
@@ -247,13 +272,13 @@ export default function ViewChannel() {
                                                 }}
                                                 className="block w-full text-left px-3 py-2 hover:bg-gray-100 cursor-pointer"
                                             >
-                                                <i className="fa-solid fa-pencil"></i> Edit
+                                                <i className="fa-solid fa-pencil cursor-pointer"></i> Edit
                                             </button>
                                             <button
                                                 onClick={() => handleDeleteVideo(video._id)}
                                                 className="block w-full text-left px-3 py-2 hover:bg-gray-100 text-red-500 cursor-pointer"
                                             >
-                                                <i className="fa-solid fa-trash"></i> Delete
+                                                <i className="fa-solid fa-trash cursor-pointer"></i> Delete
                                             </button>
                                         </div>
                                     )}
@@ -280,7 +305,11 @@ export default function ViewChannel() {
                                 {/* Video File */}
                                 <div className="flex flex-col space-y-0.5">
                                     <label className="font-medium text-sm">Select Video File</label>
-                                    <input type="file" onChange={(e) => setSelectedVideo(e.target.files[0])} className="border p-2 rounded" />
+                                    <input type="file"  onChange={(e) => {
+    const file = e.target.files[0];
+    // e.target.value = null; 
+    setSelectedVideo(file);
+  }} className="border p-2 rounded" />
                                     {errors.video && <p className="text-red-500 text-xs">{errors.video}</p>}
                                 </div>
 
@@ -314,19 +343,23 @@ export default function ViewChannel() {
                                         className="border p-2 rounded" />
                                     {errors.category && <p className="text-red-500 text-xs">{errors.category}</p>}
                                 </div>
-
+                                {uploadSuccess && (
+                                    <div className="text-green-600 text-sm font-medium text-center mt-2">
+                                        {uploadSuccess}
+                                    </div>
+                                )}
                                 {/* Buttons */}
                                 <div className="flex justify-end space-x-3 pt-4">
-                                    <button onClick={() => setShowModal(false)} className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
+                                    <button onClick={() => setShowModal(false)} className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 cursor-pointer">
                                         Cancel
                                     </button>
 
                                     <button
                                         onClick={handleUpload}
-                                        className={`px-6 py-2 rounded-lg text-white font-semibold ${isUploading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
+                                        className={`px-6 py-2 rounded-lg text-white font-semibold ${isUploading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700 cursor-pointer'}`}
                                         disabled={isUploading}
                                     >
-                                        {isUploading ? <Spinner /> : 'Upload Video'}
+                                        {isUploading ? 'Uploading' : 'Upload Video'}
                                     </button>
                                 </div>
 

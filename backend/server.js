@@ -8,7 +8,10 @@ import channelRouter from "./routes/channel.routes.js"
 import cookieParser from 'cookie-parser';
 import videoRouter from "./routes/video.routes.js";
 import commentRouter from "./routes/comment.routes.js";
-
+import userModel from "./models/user.model.js";
+import channelModel from "./models/channel.model.js";
+import videoModel from "./models/video.model.js";
+import seed from "./utils/seed.js";
 
 
 // Loading environment variables from .env file
@@ -37,13 +40,23 @@ app.use("/comments",commentRouter)
 // ------------------ DATABASE CONNECTION ------------------
 // Connecting to MongoDB using Mongoose
 mongoose.connect(process.env.MONGO_URI)
-    .then(() => {
-        console.log("Connected to MongoDB");
-        // Starting the server on the port defined in .env or default to 5000
-        app.listen(process.env.PORT || 5000, () => {
-            console.log(`server listening at port ${process.env.PORT}`)
-        })
-    })
+ .then(async () => {
+    console.log("Connected to MongoDB");
+
+    // Optional: Seed only if empty
+    const userCount = await userModel.countDocuments();
+    const channelCount = await channelModel.countDocuments();
+    const videoCount = await videoModel.countDocuments();
+
+    if (userCount === 0 && channelCount === 0 && videoCount === 0) {
+      console.log(" Seeding initial data...");
+      await seed(); // run seeding logic only if all are empty
+    }
+
+    app.listen(process.env.PORT || 5000, () => {
+      console.log(` Server listening on port ${process.env.PORT || 5000}`);
+    });
+  })
     .catch((error) => {
         console.error("MongoDB connection failed:", error.message);
     });

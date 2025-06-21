@@ -93,7 +93,7 @@ export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
                   <img
                     src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.username || "User")}&background=random`}
                     alt="User Avatar"
-                    className="w-8 h-8 rounded-full object-cover"
+                    className="w-8 h-8 rounded-full object-cover cursor-pointer"
                     onClick={() => setShowMenu((prev) => !prev)}
                   />
                   <span className="text-gray-700 font-medium">{user.username || "User"}</span>
@@ -106,7 +106,7 @@ export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
                         <img
                           src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.username || "User")}&background=random`}
                           alt="User Avatar"
-                          className="w-10 h-10 rounded-full object-cover cursor-pointer"
+                          className="w-10 h-10 rounded-full object-cover"
                         />
                         <div className="flex flex-col">
                           <span className="font-semibold text-gray-800 text-sm sm:text-base">{user.username}</span>
@@ -160,7 +160,7 @@ export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
                       onClose();
                       navigate(`/signin?redirect=${encodeURIComponent(location.pathname)}`)
                     }}
-                    className="flex items-center gap-2 px-4 py-1 text-md font-semibold text-blue-600 border border-blue-600 rounded-full hover:bg-blue-50"
+                    className="flex items-center gap-2 px-4 py-1 text-md font-semibold text-blue-600 border border-blue-600 rounded-full hover:bg-blue-50 cursor-pointer"
                   >
                     <i className="fa-solid fa-circle-user text-xl"></i>
                     Sign In

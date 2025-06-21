@@ -11,8 +11,9 @@ export default function FilterBar({ onFilterChange }) {
 
    // Handle filter click
   const handleClick = (filter) => {
-    setActiveFilter(filter);  // Update selected filter in state
+// Update selected filter in state
     onFilterChange(filter);    // Pass selected filter to parent component via callback
+       setActiveFilter(filter);  
   };
 // Scroll left by 300px
   const scrollLeft = () => {
@@ -52,7 +53,7 @@ export default function FilterBar({ onFilterChange }) {
               <button
                 key={filter}
                 onClick={() => handleClick(filter)}
-                className={`px-4 py-1 rounded-xl ${
+                className={`px-4 py-1 rounded-xl cursor-pointer ${
                   activeFilter === filter
                     ? "bg-black text-white"
                     : "bg-gray-100 text-black"
@@ -67,7 +68,7 @@ export default function FilterBar({ onFilterChange }) {
         {/* Right Arrow */}
         <button
           onClick={scrollRight}
-          className="px-2 py-0.5 text-xl z-10 bg-white border rounded-full cursor-pointer hover:bg-gray-200"
+          className="px-2 py-0.5 text-xl z-10 bg-white border rounded-full cursor-pointer hover:bg-gray-200 "
         >
         <i className="fa-solid fa-chevron-right"></i>
         </button>
