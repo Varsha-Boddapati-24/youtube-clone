@@ -12,12 +12,13 @@ const Home = lazy(() => import('./pages/Home.jsx'));
 const Search = lazy(() => import('./pages/Search.jsx'));
 const VideoPlayer = lazy(() => import('./pages/VideoPlayer.jsx'));
 const ViewChannel = lazy(() => import('./pages/ViewChannel.jsx'));
+const NotFound=lazy(() => import('./pages/NotFound.jsx'));
 
 // Define the routes for the application using React Router's createBrowserRouter
 const appRouter = createBrowserRouter([
   {
     path: "/", // Base path
-    element: <App />,   // App component is the layout wrapper (contains header/sidebar/etc.)
+    element: <Suspense fallback={<Spinner/>}><App/></Suspense>,   // App component is the layout wrapper (contains header/sidebar/etc.)
     children: [      // Nested routes rendered via <Outlet /> in App
       {
         index:true,  // Default route at "/"
@@ -45,7 +46,10 @@ const appRouter = createBrowserRouter([
       }
 
 
-    ]
+    ],
+     // Render this component for unmatched routes (404 Not Found)
+       errorElement:<Suspense fallback={<Spinner/>}><NotFound/></Suspense>
+      
   }
 ])
 

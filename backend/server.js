@@ -12,6 +12,7 @@ import userModel from "./models/user.model.js";
 import channelModel from "./models/channel.model.js";
 import videoModel from "./models/video.model.js";
 import seed from "./utils/seed.js";
+import logger from "./middlewares/logger.js";
 
 
 // Loading environment variables from .env file
@@ -21,6 +22,8 @@ const app = express();
 // ------------------ MIDDLEWARES ------------------
 // Middleware to parse incoming JSON request bodies
 app.use(express.json({ limit: '10mb' }))
+// Custom middleware to log incoming requests (timestamp, method, path)
+app.use(logger);
 // Enable CORS for frontend at localhost:5173 with credentials like cookies
 app.use(cors(
     {
