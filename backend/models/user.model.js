@@ -25,7 +25,11 @@ const userSchema = new mongoose.Schema({
   channel: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Channel"
-  }
+  },
+  avatarUrl: {
+  type: String,
+  default: "", 
+}
 }, 
   // Automatically adds createdAt and updatedAt timestamps
 {

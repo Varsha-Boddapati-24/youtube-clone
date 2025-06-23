@@ -14,28 +14,31 @@ const users = [
   {
     username: "Varsha",
     email: "varshaboddapati@gmail.com",
-    password: "12345678",
+    password: "Varsha@24",
+     avatarUrl:"https://cdn.pixabay.com/photo/2017/11/12/16/41/musician-2943109_1280.jpg",
     channelName: "Varsha's Channel",
     channelAvatar: "https://cdn.pixabay.com/photo/2017/11/12/16/41/musician-2943109_1280.jpg",
-    channelBanner: "https://cdn.pixabay.com/photo/2018/09/30/14/53/guitar-3717871_1280.jpg",
+    channelBanner: "https://cdn.pixabay.com/photo/2023/05/22/18/11/guitar-8011240_1280.jpg",
     description: "A collection of creative content by Varsha"
   },
   {
     username: "Alex",
     email: "alex.wright92@gmail.com",
-    password: "12345678",
+    password: "Varsha@24",
+    avatarUrl:"https://cdn.pixabay.com/photo/2016/11/29/06/17/audience-1867754_1280.jpg",
     channelName: "Alex's Arena",
     channelAvatar: "https://cdn.pixabay.com/photo/2016/11/29/06/17/audience-1867754_1280.jpg",
-    channelBanner: "https://cdn.pixabay.com/photo/2016/07/27/05/31/dj-154146_1280.jpg",
+    channelBanner: "https://cdn.pixabay.com/photo/2017/04/21/21/45/dj-2250056_1280.jpg",
     description: "Tech, music, and more curated by Alex"
   },
   {
     username: "Ryan",
     email: "ryan.jameson84@gmail.com",
-    password: "12345678",
+    password: "Varsha@24",
+     avatarUrl:"https://cdn.pixabay.com/photo/2022/10/24/07/11/window-7542846_1280.jpg",
     channelName: "Ryan's World",
-    channelAvatar: "https://cdn.pixabay.com/photo/2015/01/08/18/25/man-593333_1280.jpg",
-    channelBanner: "https://cdn.pixabay.com/photo/2017/08/07/20/33/concert-2607740_1280.jpg",
+    channelAvatar: "https://cdn.pixabay.com/photo/2022/10/24/07/11/window-7542846_1280.jpg",
+    channelBanner: "https://cdn.pixabay.com/photo/2024/01/25/12/30/mountain-8531778_1280.jpg",
     description: "Jazz, news, tech and more"
   }
 ];
@@ -391,6 +394,8 @@ const videoData=[
         username: user.username,
         email: user.email,
         password: hashedPassword,
+        avatarUrl:user.avatarUrl
+
       });
       return { ...user, _id: newUser._id };
     }));

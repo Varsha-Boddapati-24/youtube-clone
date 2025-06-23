@@ -24,10 +24,10 @@ export default function VideoPlayerPage() {
       const allVideos = await axios.get(`http://localhost:5000/videos`);
       console.log("allVideos", allVideos)
       // Filter out the current video from the suggestions
-      const suggets = allVideos.data.filter(v => v._id !== id)
+      const suggets = allVideos.data.videos.filter(v => v._id !== id)
       console.log("suggest", suggets)
 
-      setSuggested(allVideos.data.filter(v => v._id !== id));
+      setSuggested(allVideos.data.videos.filter(v => v._id !== id));
     };
     fetchData();
   }, [id]);// re-run when video ID changes

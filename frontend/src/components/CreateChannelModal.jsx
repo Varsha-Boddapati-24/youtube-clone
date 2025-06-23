@@ -15,7 +15,7 @@ export default function CreateChannelModal({ onClose }) {
   const [isLoading, setIsLoading] = useState(false);
 
 
-  const { fetchUser } = useAuth(); // Used to refresh user data after successful channel creation
+  const { fetchUser , setUser} = useAuth(); // Used to refresh user data after successful channel creation
 
   // Handle file input change for avatar upload
   const handleFileChange = (e) => {

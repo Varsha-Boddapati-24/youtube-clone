@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import CreateChannelModal from "./createChannelModal.jsx";
+import CreateChannelModal from "./CreateChannelModal.jsx";
 
 import { useAuth } from "../context/AuthContext.jsx";
 import useClickOutside from "../hooks/useClickOutside";
 
 export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
-    // Get user & signout from AuthContext
+  // Get user & signout from AuthContext
   const { user, signout } = useAuth();
-  console.log("user", user) 
+  console.log("user", user)
   const [query, setQuery] = useState("");  // Search query state
   const [showSearch, setShowSearch] = useState(false);  // Toggle for mobile search
   const [showMenu, setShowMenu] = useState(false);  // Toggle for user menu dropdow
@@ -17,21 +17,21 @@ export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
   const location = useLocation();
   const menuRef = useRef(null); // Ref to detect outside click for user menu
 
-    // Handle search button click
+  // Handle search button click
   const handleSearch = () => {
     if (query.trim()) {
       navigate(`/search?q=${encodeURIComponent(query)}`);
     }
   }
 
-   // On page load, set query value from URL params
+  // On page load, set query value from URL params
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const urlQuery = params.get("q") || "";
     setQuery(urlQuery);
   }, [location.search]);
 
-// Allow "Enter" key to trigger search
+  // Allow "Enter" key to trigger search
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       handleSearch();
@@ -43,24 +43,24 @@ export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
     <>
       {/* Header container */}
       <header className="flex items-center justify-between bg-white   px-4 py-2 sticky top-0  z-50">
-         {/* ----------------- MOBILE SEARCH BAR (visible only on small screens) ---------------- */}
+        {/* ----------------- MOBILE SEARCH BAR (visible only on small screens) ---------------- */}
         {showSearch ? (
           <div className="flex items-center w-full sm:hidden py-2 gap-2">
             <button onClick={() => setShowSearch(false)} className="text-xl text-gray-700 mr-2">
               <i className="fa-solid fa-arrow-left"></i>
             </button>
-             {/* Mobile search input */}
+            {/* Mobile search input */}
             <input type="text" placeholder="Search" value={query} onKeyDown={handleKeyDown} onChange={(e) => setQuery(e.target.value)}
               className="flex-grow px-4 py-2 border border-gray-300 rounded-full focus:outline-none"
             />
-              {/* Mobile search icon button */}
+            {/* Mobile search icon button */}
             <button className=" py-2 ml-2 hover:bg-gray-100 rounded-full" onClick={handleSearch}>
               <i className="fa-solid fa-magnifying-glass text-lg text-gray-700"></i>
             </button>
           </div>
 
         ) : (
-         // ----------------- REGULAR HEADER CONTENT (desktop & mobile default) ----------------
+          // ----------------- REGULAR HEADER CONTENT (desktop & mobile default) ----------------
           <div className="flex items-center justify-between w-full">
             {/* Left: menu + logo */}
             <div className="flex items-center gap-4 ">
@@ -81,7 +81,7 @@ export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
 
             {/* Right side: Mobile search icon + Auth buttons */}
             <div className="flex items-center gap-2 ">
-                {/* Mobile search button (toggles search bar on small screen) */}
+              {/* Mobile search button (toggles search bar on small screen) */}
               <button onClick={() => setShowSearch(true)} className="sm:hidden p-2 text-gray-700">
                 <i className="fa-solid fa-magnifying-glass text-lg"></i>
               </button>
@@ -91,20 +91,28 @@ export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
                 <div ref={menuRef} className=" relative flex items-center gap-2">
                   {/* Avatar Image */}
                   <img
-                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.username || "User")}&background=random`}
+                    src={
+                      user?.avatarUrl
+                        ? user.avatarUrl
+                        : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.username || "User")}&background=random`
+                    }
                     alt="User Avatar"
                     className="w-8 h-8 rounded-full object-cover cursor-pointer"
                     onClick={() => setShowMenu((prev) => !prev)}
                   />
                   <span className="text-gray-700 font-medium">{user.username || "User"}</span>
- {/* Dropdown Menu */}
+                  {/* Dropdown Menu */}
 
                   {showMenu && (
                     <div className="absolute right-0 mt-60 w-55 md:w-72 lg:w-70 bg-white rounded-xl shadow-lg z-50 p-4">
                       {/* User Info */}
                       <div className="flex items-center gap-3 mb-3 py-4 border-b-1">
                         <img
-                          src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.username || "User")}&background=random`}
+                  src={
+                      user?.avatarUrl
+                        ? user.avatarUrl
+                        : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.username || "User")}&background=random`
+                    }
                           alt="User Avatar"
                           className="w-10 h-10 rounded-full object-cover"
                         />
@@ -114,7 +122,7 @@ export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
                         </div>
                       </div>
 
-                       {/* Create/View Channel logic */}
+                      {/* Create/View Channel logic */}
                       {!user.channel ? (
                         <button
                           onClick={() => {
@@ -137,7 +145,7 @@ export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
                           <i className="fa-solid fa-eye"></i> View Channel
                         </button>
                       )}
-             {/* Sign Out Button */}
+                      {/* Sign Out Button */}
                       <button
                         onClick={async () => {
                           await signout();
@@ -153,7 +161,7 @@ export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
               )
 
                 : (
-                   // ---------------- SIGN IN BUTTON (Not Signed In) -----------------
+                  // ---------------- SIGN IN BUTTON (Not Signed In) -----------------
                   <button
                     onClick={(e) => {
                       console.log("called")

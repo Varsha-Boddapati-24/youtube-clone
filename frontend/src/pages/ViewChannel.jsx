@@ -38,7 +38,7 @@ export default function ViewChannel() {
 
     const { id } = useParams();
     const { user } = useAuth();
-    
+
     // Fetch channel and videos once user is logged in
     useEffect(() => {
         if (user) {
@@ -170,7 +170,17 @@ export default function ViewChannel() {
                     <div className="flex items-center gap-6 px-12 mt-4 ">
                         {/* Channel avatar */}
                         <div className="w-20 h-20 sm:w-38 sm:h-38 rounded-full overflow-hidden border-4 border-white shadow-md bg-white">
-                            <img src={channel.channelAvatar} alt="Profile" className="w-20 h-20 sm:w-38 sm:h-38 object-cover" />
+                            <img
+                                src={
+                                    user?.avatarUrl
+                                        ? user.avatarUrl
+
+                                        : `https://ui-avatars.com/api/?name=${encodeURIComponent(channel.channelName || "User")}&background=random`
+                                }
+                                alt="Profile"
+                                className="w-20 h-20 sm:w-38 sm:h-38 object-cover"
+                            />
+
                         </div>
                         {/* Channel name and description */}
                         <div>

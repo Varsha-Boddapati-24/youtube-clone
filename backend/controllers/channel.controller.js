@@ -34,6 +34,9 @@ export const createChannel = async (req, res) => {
     await channel.save();
     // Link the newly created channel to the user
     existingUser.channel = channel._id;
+    if (channelAvatar) {
+  existingUser.avatarUrl = channelAvatar;
+}
     await existingUser.save();
  // Respond with success message and the new channel details
     res.status(201).json({ message: "Channel created successfully", channel });

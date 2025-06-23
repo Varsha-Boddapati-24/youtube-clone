@@ -52,7 +52,7 @@ export const AuthProvider = (props) => {
   }
     // Provide the auth values to all children components
   return (
-    <authContext.Provider value={{ user, fetchUser, signout , loading,error }}>
+    <authContext.Provider value={{ user,setUser, fetchUser, signout , loading,error }}>
       {props.children}
     </authContext.Provider>
   );
