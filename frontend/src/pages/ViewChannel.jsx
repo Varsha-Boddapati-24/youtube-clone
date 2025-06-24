@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useParams } from 'react-router-dom';
 import Spinner from '../components/Spinner';
+import PublishedVideoCard from '../components/PublishedVideoCard';
 
 export default function ViewChannel() {
     // Holds the selected video file for upload
@@ -231,53 +232,18 @@ export default function ViewChannel() {
                     ) : (
                         videos.map((video) => (
                             <div key={video._id} className="flex items-center justify-between  rounded-lg shadow-md p-3 relative">
-
-                                {/* Thumbnail */}
-                                <img src={video.thumbnailUrl} alt={video.title} className="w-48 h-28 object-cover rounded" />
-
-                                {/* Video Info */}
-                                <div className="flex-1 px-4">
-                                    {editingVideoId === video._id ? (
-                                        // Edit Mode
-                                        <>
-
-                                            <div className="mb-2">
-                                                <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-                                                <input
-                                                    className="border w-full py-2 px-2 rounded"
-                                                    type="text"
-                                                    value={editingTitle}
-                                                    onChange={(e) => setEditingTitle(e.target.value)}
-                                                />
-                                            </div>
-
-                                            <div className="mb-2">
-                                                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                                                <textarea
-                                                    className="border w-full py-2 px-2 rounded"
-                                                    value={editingDescription}
-                                                    onChange={(e) => setEditingDescription(e.target.value)}
-                                                />
-                                            </div>
-
-                                            <div className="flex justify-end gap-3 mt-2">
-                                                <button onClick={() => setEditingVideoId(null)} className="text-gray-500 cursor-pointer">Cancel</button>
-                                                <button
-                                                    onClick={() => handleEditSubmit(video._id)}
-                                                    className="bg-blue-600 text-white px-4 py-1 rounded cursor-pointer">
-                                                    Save
-                                                </button>
-                                            </div>
-                                        </>
-                                    ) : (
-                                        // View Mode
-                                        <>
-                                            <h3 className="font-semibold text-lg">{video.title}</h3>
-                                            <p className="text-sm text-gray-500">{channel.channelName}</p>
-                                            <p className="text-sm text-gray-400">{video.views} views • {new Date(video.uploadDate).toLocaleDateString()}</p>
-                                        </>
-                                    )}
-                                </div>
+                                <PublishedVideoCard
+                                    key={video._id}
+                                    video={video}
+                                    channelName={channel.channelName}
+                                    editingVideoId={editingVideoId}
+                                    editingTitle={editingTitle}
+                                    editingDescription={editingDescription}
+                                    setEditingVideoId={setEditingVideoId}
+                                    setEditingTitle={setEditingTitle}
+                                    setEditingDescription={setEditingDescription}
+                                    handleEditSubmit={handleEditSubmit}
+                                />
 
                                 {/* Three dot menu */}
                                 <div className="relative">
