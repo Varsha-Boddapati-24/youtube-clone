@@ -8,7 +8,6 @@ import Spinner from '../components/Spinner';
 export default function VideoPlayerPage() {
   // Extract the `id` from the route parameter 
   const { id } = useParams();
-  console.log("id", id)
   // State to store the currently selected video
   const [video, setVideo] = useState(null);
   // State to store suggested videos excluding the current one
@@ -22,10 +21,8 @@ export default function VideoPlayerPage() {
       setVideo(videoRes.data);
       // Fetch all videos for suggestions
       const allVideos = await axios.get(`http://localhost:5000/videos`);
-      console.log("allVideos", allVideos)
       // Filter out the current video from the suggestions
       const suggets = allVideos.data.videos.filter(v => v._id !== id)
-      console.log("suggest", suggets)
 
       setSuggested(allVideos.data.videos.filter(v => v._id !== id));
     };

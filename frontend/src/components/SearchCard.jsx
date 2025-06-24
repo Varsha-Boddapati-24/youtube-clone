@@ -10,7 +10,6 @@ export default function SearchCard({ video }) {
 
     // Once video metadata is loaded, fetch duration
     useEffect(() => {
-        console.log("inside useeffect")
         const handleLoadedMetadata = () => {
             const seconds = videoRef.current?.duration || 0;
             setDuration(seconds);// Save duration

@@ -19,7 +19,6 @@ export const AuthProvider = (props) => {
       setError(null);
          // Call the backend to get the user data
       const res = await axios.get("http://localhost:5000/user", { withCredentials: true });// Include cookies for authentication
-      console.log("res", res)
       setUser(res.data.user);// Save user data to state
     } catch (err) {
       if (err.response?.status === 401) {

@@ -5,7 +5,6 @@ dotenv.config();
 function authenticateUser(req, res, next) {
 const authHeader = req.headers.authorization;
 
-  console.log("inside auth")
  const token = req.cookies.token||authHeader && authHeader.split(" ")[1];;
     // If no token found, return unauthorized response
     if (!token) {
@@ -26,7 +25,6 @@ const authHeader = req.headers.authorization;
         }
         // Token is valid, attach decoded user info to request object
         req.user = decodedUser;
-        console.log(req.user)
         // Proceed to the next middleware or controller
         next();
     });

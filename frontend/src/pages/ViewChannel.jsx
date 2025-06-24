@@ -64,7 +64,6 @@ export default function ViewChannel() {
     const fetchVideos = async () => {
         try {
             const res = await axios.get(`http://localhost:5000/videos/channel/${id}`);
-            console.log("Fetched Videos:", res.data);
             setVideos(res.data);
         } catch (err) {
             console.error("Error fetching videos", err);

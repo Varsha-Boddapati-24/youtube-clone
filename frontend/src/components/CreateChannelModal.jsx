@@ -20,7 +20,6 @@ export default function CreateChannelModal({ onClose }) {
   // Handle file input change for avatar upload
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    console.log("file", file)
     if (file) {
       setSelectedAvatarFile(file);
       const reader = new FileReader();

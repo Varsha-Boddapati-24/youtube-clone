@@ -8,7 +8,6 @@ import useClickOutside from "../hooks/useClickOutside";
 export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
   // Get user & signout from AuthContext
   const { user, signout } = useAuth();
-  console.log("user", user)
   const [query, setQuery] = useState("");  // Search query state
   const [showSearch, setShowSearch] = useState(false);  // Toggle for mobile search
   const [showMenu, setShowMenu] = useState(false);  // Toggle for user menu dropdow
@@ -164,7 +163,6 @@ export default function Header({ toggleSidebar, hamburgerRef, onClose }) {
                   // ---------------- SIGN IN BUTTON (Not Signed In) -----------------
                   <button
                     onClick={(e) => {
-                      console.log("called")
                       onClose();
                       navigate(`/signin?redirect=${encodeURIComponent(location.pathname)}`)
                     }}

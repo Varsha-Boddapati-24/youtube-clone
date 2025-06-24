@@ -43,7 +43,6 @@ export const getCommentsByVideoId = async (req, res) => {
   try {
     const comments = await commentModel.find({ videoId: req.params.videoId })
       .populate('userId', 'username');
-      console.log("comments",comments)
     res.json(comments);
   } catch (err) {
     res.status(500).json({ message: "Error fetching comments", error: err.message });

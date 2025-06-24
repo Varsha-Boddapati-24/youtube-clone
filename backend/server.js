@@ -52,7 +52,6 @@ mongoose.connect(process.env.MONGO_URI)
     const userCount = await userModel.countDocuments();
     const channelCount = await channelModel.countDocuments();
     const videoCount = await videoModel.countDocuments();
-console.log("Users:", userCount, "Channels:", channelCount, "Videos", videoCount);
 
     if (userCount === 0 && channelCount === 0 && videoCount === 0) {
       console.log(" Seeding initial data...");

@@ -15,9 +15,7 @@ export default function SignIn() {
     const location = useLocation();
 
     const params = new URLSearchParams(location.search);
-    console.log("parms", params.get('redirect'))
     const redirectPath = params.get('redirect') || '/'
-    console.log("redirectPath", redirectPath)
     // Regex patterns for email and strong password
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -49,15 +47,12 @@ export default function SignIn() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (validateLogin()) {
-            console.log("inside")
             try {
-                console.log("inside try ")
                 const res = await axios.post("http://localhost:5000/user/signin", {
                     email,
                     password
                 }, { withCredentials: true });
                 await fetchUser();// Refresh user context after login
-                console.log("resule", res)
                 navigate(redirectPath);// Redirect to intended path or homepage
 
             } catch (error) {

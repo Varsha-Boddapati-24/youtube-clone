@@ -32,11 +32,11 @@ export const getAllVideos = async (req, res) => {
 // GET /videos/:id - fetch a single video
 export const getVideoById = async (req, res) => {
   try {
-    console.log("req.params.id",req.params.id)
+
     const video = await videoModel.findById(req.params.id)
       .populate('channelId', 'channelName channelAvatar')
       .populate('uploader', 'username');
-      console.log(video)
+    
 
     if (!video) return res.status(404).json({ message: "Video not found" });
     res.json(video);
@@ -49,7 +49,6 @@ export const getVideoById = async (req, res) => {
 export const getVideosByChannelId = async (req, res) => {
   try {
     const { id } = req.params;
-  console.log("id",id)
 
   // Find all videos where channelId matches the given id
     const videos = await videoModel.find({ channelId: id });
