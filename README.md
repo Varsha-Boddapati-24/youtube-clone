@@ -6,6 +6,9 @@ A full-stack YouTube clone built using the MERN stack (MongoDB, Express.js, Reac
 ## 🔗 Demo Link
 [Watch Demo here](https://drive.google.com/file/d/1v7KqoT3mfDrIiCiV-y2DeTmdf96ZHRBL/view?usp=sharing)
 
+[View Live Site](https://yt-clone-vb24.netlify.app)
+
+
 ## 🔗 Repository Link
 
 [GitHub Repo](https://github.com/Varsha-Boddapati-24/youtube-clone.git)
