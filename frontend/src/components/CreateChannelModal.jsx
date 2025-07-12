@@ -63,7 +63,7 @@ export default function CreateChannelModal({ onClose }) {
       if (selectedAvatarFile) formData.append("channelAvatar", selectedAvatarFile);
       if (selectedBannerFile) formData.append("channelBanner", selectedBannerFile);
       // API call to create new channel
-      const res = await axios.post("http://localhost:5000/channels/create", formData, {
+      const res = await axios.post("https://youtube-clone-vkhx.onrender.com/channels/create", formData, {
         headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });

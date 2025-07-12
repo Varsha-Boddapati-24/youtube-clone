@@ -33,8 +33,8 @@ function Home() {
            // If filter is "All", don't include category param
         const res = await axios.get(
           filter === "All"
-            ? `http://localhost:5000/videos?page=${page}&limit=10`
-            : `http://localhost:5000/videos?category=${filter}&page=${page}&limit=10`
+            ? `https://youtube-clone-vkhx.onrender.com/videos?page=${page}&limit=10`
+            : `https://youtube-clone-vkhx.onrender.com/videos?category=${filter}&page=${page}&limit=10`
         );
         // Append new videos to the existing list
         setVideos(prev => [...prev, ...res.data.videos]);

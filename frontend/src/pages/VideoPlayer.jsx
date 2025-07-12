@@ -17,10 +17,10 @@ export default function VideoPlayerPage() {
     // Fetch video details and suggested videos whenever the ID changes
     const fetchData = async () => {
       // Fetch the current video by ID
-      const videoRes = await axios.get(`http://localhost:5000/videos/${id}`);
+      const videoRes = await axios.get(`https://youtube-clone-vkhx.onrender.com/videos/${id}`);
       setVideo(videoRes.data);
       // Fetch all videos for suggestions
-      const allVideos = await axios.get(`http://localhost:5000/videos`);
+      const allVideos = await axios.get(`https://youtube-clone-vkhx.onrender.com/videos`);
       // Filter out the current video from the suggestions
       const suggets = allVideos.data.videos.filter(v => v._id !== id)
 

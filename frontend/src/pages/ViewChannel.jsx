@@ -55,7 +55,7 @@ export default function ViewChannel() {
     // Fetch the channel's profile and metadata using its ID
     const fetchChannel = async () => {
         try {
-            const res = await axios.get(`http://localhost:5000/channels/${id}`, { withCredentials: true });
+            const res = await axios.get(`https://youtube-clone-vkhx.onrender.com/channels/${id}`, { withCredentials: true });
             setChannel(res.data);
         } catch (err) {
             console.error("Error fetching channel", err);
@@ -64,7 +64,7 @@ export default function ViewChannel() {
     // Fetch all videos uploaded by the channel
     const fetchVideos = async () => {
         try {
-            const res = await axios.get(`http://localhost:5000/videos/channel/${id}`);
+            const res = await axios.get(`https://youtube-clone-vkhx.onrender.com/videos/channel/${id}`);
             setVideos(res.data);
         } catch (err) {
             console.error("Error fetching videos", err);
@@ -73,7 +73,7 @@ export default function ViewChannel() {
 
     const handleEditSubmit = async (videoId) => {
         try {
-            await axios.put(`http://localhost:5000/videos/${videoId}`, {
+            await axios.put(`https://youtube-clone-vkhx.onrender.com/videos/${videoId}`, {
                 title: editingTitle,
                 description: editingDescription
             }, { withCredentials: true });
@@ -87,7 +87,7 @@ export default function ViewChannel() {
 
     const handleDeleteVideo = async (videoId) => {
         try {
-            await axios.delete(`http://localhost:5000/videos/${videoId}`, { withCredentials: true });
+            await axios.delete(`https://youtube-clone-vkhx.onrender.com/videos/${videoId}`, { withCredentials: true });
             fetchVideos();
         } catch (err) {
             console.error(err);
@@ -119,7 +119,7 @@ export default function ViewChannel() {
         formData.append("channelId", id);
 
         try {
-            await axios.post("http://localhost:5000/videos/upload", formData, {
+            await axios.post("https://youtube-clone-vkhx.onrender.com/videos/upload", formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
                 withCredentials: true
             });

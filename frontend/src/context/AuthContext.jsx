@@ -18,7 +18,7 @@ export const AuthProvider = (props) => {
     try {
       setError(null);
          // Call the backend to get the user data
-      const res = await axios.get("http://localhost:5000/user", { withCredentials: true });// Include cookies for authentication
+      const res = await axios.get("https://youtube-clone-vkhx.onrender.com/user", { withCredentials: true });// Include cookies for authentication
       setUser(res.data.user);// Save user data to state
     } catch (err) {
       if (err.response?.status === 401) {
@@ -43,7 +43,7 @@ export const AuthProvider = (props) => {
   // Function to handle signout
   async function signout() {
     try {
-      await axios.post("http://localhost:5000/user/signout", {}, { withCredentials: true });
+      await axios.post("https://youtube-clone-vkhx.onrender.com/user/signout", {}, { withCredentials: true });
       setUser(null);
     } catch (err) {
       setError(err.response?.data?.error || "Failed to signout");

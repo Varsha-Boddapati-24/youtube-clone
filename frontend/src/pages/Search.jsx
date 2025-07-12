@@ -24,7 +24,7 @@ export default function Search() {
 // Fetch search results when query changes
   useEffect(() => {
     const fetchResults = async () => {
-      const res = await axios.get(`http://localhost:5000/videos/search?query=${query}`);
+      const res = await axios.get(`https://youtube-clone-vkhx.onrender.com/videos/search?query=${query}`);
       setVideos(res.data);// update video list with response
     };
     fetchResults();

@@ -30,7 +30,7 @@ export default function VideoInfoSection({ video }) {
 
         try {
                 // Send POST request to like the video
-            const res = await axios.post(`http://localhost:5000/videos/${video._id}/like`, {}, { withCredentials: true });
+            const res = await axios.post(`https://youtube-clone-vkhx.onrender.com/videos/${video._id}/like`, {}, { withCredentials: true });
              // Update state with latest like/dislike counts from backend
             setLikes(res.data.likes?.length);
             setDislikes(res.data.dislikes?.length);
@@ -49,7 +49,7 @@ export default function VideoInfoSection({ video }) {
 
         try {
                     // Send POST request to dislike the video
-            const res = await axios.post(`http://localhost:5000/videos/${video._id}/dislike`, {}, { withCredentials: true });
+            const res = await axios.post(`https://youtube-clone-vkhx.onrender.com/videos/${video._id}/dislike`, {}, { withCredentials: true });
   // Update state with new counts
             setLikes(res.data.likes?.length);
             setDislikes(res.data.dislikes?.length);

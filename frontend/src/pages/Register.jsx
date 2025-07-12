@@ -73,7 +73,7 @@ export default function Register() {
         if (validateRegister()) {
             try {
                 // Make registration API call
-                const response = await axios.post('http://localhost:5000/user/register', {
+                const response = await axios.post('https://youtube-clone-vkhx.onrender.com/user/register', {
                     username,
                     email,
                     password

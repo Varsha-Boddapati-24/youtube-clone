@@ -33,7 +33,7 @@ export default function CommentsSection({ videoId }) {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/comments/video/${videoId}`);
+        const res = await axios.get(`https://youtube-clone-vkhx.onrender.com/comments/video/${videoId}`);
         setComments(res.data);
       } catch (err) {
         console.error("Error fetching comments", err);
@@ -59,7 +59,7 @@ export default function CommentsSection({ videoId }) {
     if (!newComment.trim()) return;// Prevent empty comment submission
     try {
       const res = await axios.post(
-        `http://localhost:5000/comments`,
+        `https://youtube-clone-vkhx.onrender.com/comments`,
         {
           videoId: videoId,
           userId: user._id,
@@ -79,7 +79,7 @@ export default function CommentsSection({ videoId }) {
   // API CALL: Delete comment
   const handleDeleteComment = async (commentId) => {
     try {
-      await axios.delete(`http://localhost:5000/comments/${commentId}`, { withCredentials: true });
+      await axios.delete(`https://youtube-clone-vkhx.onrender.com/comments/${commentId}`, { withCredentials: true });
       // Remove deleted comment from state
       setComments(prev => prev.filter(c => c._id !== commentId));
     } catch (err) {
@@ -92,7 +92,7 @@ export default function CommentsSection({ videoId }) {
     if (!editingText.trim()) return;
     try {
       const res = await axios.put(
-        `http://localhost:5000/comments/${editingCommentId}`,
+        `https://youtube-clone-vkhx.onrender.com/comments/${editingCommentId}`,
         { text: editingText },
         { withCredentials: true }
       );
