@@ -25,9 +25,13 @@ app.use(express.json({ limit: '10mb' }))
 // Custom middleware to log incoming requests (timestamp, method, path)
 app.use(logger);
 // Enable CORS for frontend at localhost:5173 with credentials like cookies
+const allowedOrigins = [
+    'http://localhost:5173',
+    'https://yt-clone-vb24.netlify.app'
+];
 app.use(cors(
     {
-        origin: 'http://localhost:5173',
+        origin: allowedOrigins,
         credentials: true,
     }
 ));
